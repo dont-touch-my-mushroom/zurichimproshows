@@ -46,7 +46,7 @@ const formSchema = z
     dateUntil: z.date({ required_error: "End date is required." }),
     website: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")),
     instagram: z.string().optional(),
-    poster: z.instanceof(File).optional(),
+    poster: z.any().optional(),
     description: z.string().min(10, { message: "Description must be at least 10 characters." }),
     slogan: z.string().optional(),
     languages: z.array(z.string()).min(1, { message: "Select at least one language." }),
@@ -138,6 +138,12 @@ export function FestivalForm() {
   const handlePosterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      // Validate that the file is an image
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please upload an image file");
+        return;
+      }
+      
       form.setValue("poster", file)
 
       // Create a preview URL
