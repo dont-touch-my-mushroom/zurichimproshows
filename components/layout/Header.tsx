@@ -24,22 +24,22 @@ const Header = () => {
           {/* Navigation Menu */}
           <nav className="hidden md:flex space-x-8">
             <Link
-              href="/about"
+              href="/list"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
             >
-              About
-            </Link>
-            <Link
-              href="/schedule"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
-            >
-              Schedule
+              Festivals
             </Link>
             <Link
               href="/contact"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
             >
               Contact
+            </Link>
+            <Link
+              href="/add-festival"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+            >
+              Add Festival
             </Link>
           </nav>
         </div>
