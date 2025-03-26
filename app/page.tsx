@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { FestivalCard } from "@/components/card/festival-card";
+import { getUpcomingFestivalsAction } from "@/actions/festivals-actions";
+import { SelectFestival } from "@/db/schema/festivals-schema";
 
 const slides = [
   {
@@ -47,7 +50,15 @@ const slides = [
   }
 ];
 
-export default function Home() {
+export default async function Home() {
+  // Fetch upcoming festivals
+  const today = new Date();
+  const response = await getUpcomingFestivalsAction(today);
+  const upcomingFestivals = (response.status === "success" ? response.data : []) as SelectFestival[];
+  
+  // Limit to 10 items
+  const limitedFestivals = upcomingFestivals.slice(0, 10);
+
   return (
     <div className="flex flex-col">
       <Carousel className="w-full relative">
@@ -86,6 +97,23 @@ export default function Home() {
         </div>
       </Carousel>
       <h1 className="text-4xl font-bold text-center py-8">Upcoming Festivals</h1>
+      <div className="container mx-auto pb-12">
+        {limitedFestivals.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {limitedFestivals.map((festival) => (
+              <FestivalCard key={festival.id} festival={festival} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-lg text-muted-foreground">No upcoming festivals scheduled at this time.</p>
+        )}
+        
+        <div className="flex justify-center mt-8">
+          <Link href="/list">
+            <Button size="lg">View All Festivals</Button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
