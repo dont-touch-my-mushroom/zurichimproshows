@@ -1,5 +1,4 @@
 import { FestivalCard } from "@/components/card/festival-card";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getAllFestivalsAction } from "@/actions/festivals-actions";
 import { SelectFestival } from "@/db/schema/festivals-schema";
 

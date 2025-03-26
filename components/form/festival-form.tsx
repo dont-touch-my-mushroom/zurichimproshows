@@ -2,13 +2,14 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { CalendarIcon, Loader2, Save, Trash2 } from "lucide-react"
 import { format } from "date-fns"
+import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -299,10 +300,13 @@ export function FestivalForm() {
 
                 {posterPreview && (
                   <div className="border rounded-md overflow-hidden h-40 flex items-center justify-center">
-                    <img
+                    <Image
                       src={posterPreview || "/placeholder.svg"}
                       alt="Poster preview"
-                      className="max-h-full max-w-full object-contain"
+                      className="object-contain"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 300px"
+                      style={{ objectFit: "contain" }}
                     />
                   </div>
                 )}
