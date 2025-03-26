@@ -32,6 +32,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { createFestivalAction, deleteFestivalAction } from "@/actions/festivals-actions"
+import { toast } from "sonner"
 
 const formSchema = z
   .object({
@@ -79,18 +81,30 @@ export function FestivalForm() {
     setIsSubmitting(true)
 
     try {
-      // Here you would typically send the data to your API
-      console.log(values)
+      const { poster, ...festivalData } = values
+      let posterUrl: string | undefined
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      if (poster) {
+        // TODO: Implement file upload to storage service
+        // For now, we'll just use a placeholder
+        posterUrl = "/placeholder.svg"
+      }
 
-      // Redirect or show success message
-      alert("Festival information saved successfully!")
-      // router.push("/festivals")
+      const result = await createFestivalAction({
+        ...festivalData,
+        poster: posterUrl,
+        userId: "user-id", // TODO: Get actual user ID from auth context
+      })
+
+      if (result.status === "success") {
+        toast.success("Festival created successfully!")
+        router.push("/festivals")
+      } else {
+        toast.error(result.message)
+      }
     } catch (error) {
       console.error("Error saving festival information:", error)
-      alert("Failed to save festival information. Please try again.")
+      toast.error("Failed to save festival information. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -100,17 +114,19 @@ export function FestivalForm() {
     setIsSubmitting(true)
 
     try {
-      // Here you would typically send a delete request to your API
+      // TODO: Get actual festival ID from props or context
+      const festivalId = "festival-id"
+      const result = await deleteFestivalAction(festivalId)
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Redirect or show success message
-      alert("Festival deleted successfully!")
-      // router.push("/festivals")
+      if (result.status === "success") {
+        toast.success("Festival deleted successfully!")
+        router.push("/festivals")
+      } else {
+        toast.error(result.message)
+      }
     } catch (error) {
       console.error("Error deleting festival:", error)
-      alert("Failed to delete festival. Please try again.")
+      toast.error("Failed to delete festival. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
