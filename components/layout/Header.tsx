@@ -12,7 +12,7 @@ const Header = () => {
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
               <Image
-                src="/next.svg"
+                src="https://improfestivals.com/assets/images/logo_name_white.png"
                 alt="Logo"
                 width={120}
                 height={30}
