@@ -2,6 +2,13 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import {
+    SignInButton,
+    SignUpButton,
+    SignedIn,
+    SignedOut,
+    UserButton,
+  } from '@clerk/nextjs'
 
 const Header = () => {
   return (
@@ -41,6 +48,13 @@ const Header = () => {
             >
               Add Festival
             </Link>
+          <SignedOut>
+              <SignInButton />
+              <SignUpButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
           </nav>
         </div>
       </div>
