@@ -43,7 +43,8 @@ export async function deleteFestival(id: string): Promise<SelectFestival | null>
 }
 
 export async function getAllFestivals(): Promise<SelectFestival[]> {
-  return db.select().from(festivalsTable);
+  return db.select().from(festivalsTable)
+    .orderBy(desc(festivalsTable.dateFrom));
 }
 
 export async function getUpcomingFestivals(startDate: Date): Promise<SelectFestival[]> {
