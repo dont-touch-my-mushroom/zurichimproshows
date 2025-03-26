@@ -43,14 +43,13 @@ const Header = () => {
               Contact
             </Link>
             <Link
-              href="/add-festival"
+              href="/festival-form"
               className="text-primary-foreground hover:text-primary-foreground/80 px-4 py-2.5 text-base font-medium transition-colors"
             >
               Add Festival
             </Link>
-          <SignedOut>
-              <SignInButton />
-              <SignUpButton />
+            <SignedOut>
+                <SignInButton />
             </SignedOut>
             <SignedIn>
               <UserButton />
