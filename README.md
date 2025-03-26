@@ -34,3 +34,13 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# TO-DOs
+
+- Handle the image upload into google cloud storage
+- Backfill the missing images into the database
+- handle feestival editing
+- Create a festival page
+- Add a proper contact page
+- Move all images to google cloud storage
+- improve first carusel (low priority)
