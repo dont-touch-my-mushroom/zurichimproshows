@@ -86,7 +86,7 @@ export default function Home() {
           <CarouselNext className="static translate-y-0" />
         </div>
       </Carousel>
-      <h1 className="text-4xl font-bold text-center py-8">Hello World</h1>
+      <h1 className="text-4xl font-bold text-center py-8">Upcoming Festivals</h1>
     </div>
   );
 }
