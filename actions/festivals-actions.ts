@@ -1,6 +1,6 @@
 "use server";
 
-import { createFestival, deleteFestival, getFestivalById, getFestivalsByUserId, getAllFestivals, getUpcomingFestivals, updateFestival } from "@/db/queries/festivals-queries";
+import { createFestival, deleteFestival, getFestivalById, getFestivalsByUserId, getAllFestivals, getUpcomingFestivals, updateFestival, getPastFestivals } from "@/db/queries/festivals-queries";
 import { InsertFestival } from "@/db/schema/festivals-schema";
 import { ActionState } from "@/types";
 import { revalidatePath } from "next/cache";
@@ -75,5 +75,15 @@ export async function getUpcomingFestivalsAction(startDate: Date): Promise<Actio
   } catch (error) {
     console.error("Error getting upcoming festivals:", error);
     return { status: "error", message: "Failed to get upcoming festivals" };
+  }
+}
+
+export async function getPastFestivalsAction(startDate: Date): Promise<ActionState> {
+  try {
+    const festivals = await getPastFestivals(startDate);
+    return { status: "success", message: "Past festivals retrieved successfully", data: festivals };
+  } catch (error) {
+    console.error("Error getting past festivals:", error);
+    return { status: "error", message: "Failed to get past festivals" };
   }
 } 

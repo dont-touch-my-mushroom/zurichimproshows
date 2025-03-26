@@ -1,4 +1,4 @@
-import { eq, gt } from "drizzle-orm";
+import { eq, gt, lte, desc } from "drizzle-orm";
 import { db } from "../db";
 import { festivalsTable, type InsertFestival, type SelectFestival } from "../schema/festivals-schema";
 
@@ -52,4 +52,12 @@ export async function getUpcomingFestivals(startDate: Date): Promise<SelectFesti
     .from(festivalsTable)
     .where(gt(festivalsTable.dateFrom, startDate))
     .orderBy(festivalsTable.dateFrom);
+}
+
+export async function getPastFestivals(startDate: Date): Promise<SelectFestival[]> {
+  return db
+    .select()
+    .from(festivalsTable)
+    .where(lte(festivalsTable.dateFrom, startDate))
+    .orderBy(desc(festivalsTable.dateFrom));
 } 

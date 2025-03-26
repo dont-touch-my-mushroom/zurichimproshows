@@ -9,7 +9,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FestivalCard } from "@/components/card/festival-card";
-import { getUpcomingFestivalsAction } from "@/actions/festivals-actions";
+import { getUpcomingFestivalsAction, getPastFestivalsAction } from "@/actions/festivals-actions";
 import { SelectFestival } from "@/db/schema/festivals-schema";
 
 const slides = [
@@ -53,11 +53,16 @@ const slides = [
 export default async function Home() {
   // Fetch upcoming festivals
   const today = new Date();
-  const response = await getUpcomingFestivalsAction(today);
-  const upcomingFestivals = (response.status === "success" ? response.data : []) as SelectFestival[];
+  const upcomingResponse = await getUpcomingFestivalsAction(today);
+  const upcomingFestivals = (upcomingResponse.status === "success" ? upcomingResponse.data : []) as SelectFestival[];
+  
+  // Fetch past festivals
+  const pastResponse = await getPastFestivalsAction(today);
+  const pastFestivals = (pastResponse.status === "success" ? pastResponse.data : []) as SelectFestival[];
   
   // Limit to 10 items
-  const limitedFestivals = upcomingFestivals.slice(0, 10);
+  const limitedUpcomingFestivals = upcomingFestivals.slice(0, 10);
+  const limitedPastFestivals = pastFestivals.slice(0, 10);
 
   return (
     <div className="flex flex-col">
@@ -98,9 +103,9 @@ export default async function Home() {
       </Carousel>
       <h1 className="text-4xl font-bold text-center py-8">Upcoming Festivals</h1>
       <div className="container mx-auto pb-12">
-        {limitedFestivals.length > 0 ? (
+        {limitedUpcomingFestivals.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {limitedFestivals.map((festival) => (
+            {limitedUpcomingFestivals.map((festival) => (
               <FestivalCard key={festival.id} festival={festival} />
             ))}
           </div>
@@ -111,6 +116,35 @@ export default async function Home() {
         <div className="flex justify-center mt-8">
           <Link href="/list">
             <Button size="lg">View All Festivals</Button>
+          </Link>
+        </div>
+      </div>
+
+      <h1 className="text-4xl font-bold text-center py-8">Past Festivals</h1>
+      <div className="container mx-auto pb-12">
+        {limitedPastFestivals.length > 0 ? (
+          <Carousel className="w-full">
+            <CarouselContent>
+              {limitedPastFestivals.map((festival) => (
+                <CarouselItem key={festival.id} className="md:basis-1/2 lg:basis-1/3">
+                  <div className="p-1">
+                    <FestivalCard festival={festival} />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex items-center justify-center w-full gap-2 py-4">
+              <CarouselPrevious />
+              <CarouselNext />
+            </div>
+          </Carousel>
+        ) : (
+          <p className="text-center text-lg text-muted-foreground">No past festivals found.</p>
+        )}
+
+        <div className="flex justify-center mt-8">
+          <Link href="/list">
+            <Button size="lg" variant="outline">View All Festivals</Button>
           </Link>
         </div>
       </div>
