@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { createFestivalAction, deleteFestivalAction } from "@/actions/festivals-actions"
 import { toast } from "sonner"
+import { useAuth } from "@clerk/nextjs"
 
 const formSchema = z
   .object({
@@ -60,6 +61,7 @@ export function FestivalForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [posterPreview, setPosterPreview] = useState<string | null>(null)
+  const { userId } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -93,7 +95,7 @@ export function FestivalForm() {
       const result = await createFestivalAction({
         ...festivalData,
         poster: posterUrl,
-        userId: "user-id", // TODO: Get actual user ID from auth context
+        userId: userId || "",
       })
 
       if (result.status === "success") {
