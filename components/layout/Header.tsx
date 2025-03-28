@@ -48,7 +48,11 @@ const Header = () => {
               Add Festival
             </Link>
             <SignedOut>
-                <SignInButton />
+            <SignInButton mode="modal">
+              <button className="text-primary-foreground hover:text-primary-foreground/80 px-4 py-2.5 text-base font-medium transition-colors cursor-pointer">
+                Sign In
+              </button>
+            </SignInButton>
             </SignedOut>
             <SignedIn>
               <UserButton />
