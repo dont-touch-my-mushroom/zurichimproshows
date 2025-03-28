@@ -33,10 +33,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { createFestivalAction, deleteFestivalAction } from "@/actions/festivals-actions"
+import { createFestivalAction, deleteFestivalAction, updateFestivalAction } from "@/actions/festivals-actions"
 import { toast } from "sonner"
 import { useAuth } from "@clerk/nextjs"
 import { uploadImageAction } from "@/actions/upload-actions"
+import { SelectFestival } from "@/db/schema/festivals-schema"
 
 const formSchema = z
   .object({
@@ -59,26 +60,32 @@ const formSchema = z
     path: ["dateUntil"],
   })
 
-export function FestivalForm() {
+interface FestivalFormProps {
+  festival?: SelectFestival
+}
+
+export function FestivalForm({ festival }: FestivalFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
-  const [posterPreview, setPosterPreview] = useState<string | null>(null)
+  const [posterPreview, setPosterPreview] = useState<string | null>(festival?.poster || null)
   const { userId } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      country: "",
-      city: "",
-      website: "",
-      instagram: "",
-      description: "",
-      slogan: "",
-      languages: [],
-      accommodationOffered: false,
-      mixerShows: false,
+      name: festival?.name || "",
+      country: festival?.country || "",
+      city: festival?.city || "",
+      website: festival?.website || "",
+      instagram: festival?.instagram || "",
+      description: festival?.description || "",
+      slogan: festival?.slogan || "",
+      languages: festival?.languages || [],
+      accommodationOffered: festival?.accommodationOffered || false,
+      mixerShows: festival?.mixerShows || false,
+      dateFrom: festival?.dateFrom ? new Date(festival.dateFrom) : undefined,
+      dateUntil: festival?.dateUntil ? new Date(festival.dateUntil) : undefined,
     },
   })
 
@@ -87,20 +94,16 @@ export function FestivalForm() {
 
     try {
       const { poster, ...festivalData } = values
-      let posterUrl: string | undefined
+      let posterUrl: string | undefined = festival?.poster || undefined
 
       if (poster && poster instanceof File) {
-        // Show uploading state
         setIsUploading(true)
         
-        // Upload and resize image to Google Cloud Storage using server action
         const formData = new FormData()
         formData.append('file', poster)
         formData.append('directory', 'festival-posters')
         
         const uploadResult = await uploadImageAction(formData)
-        
-        // Hide uploading state
         setIsUploading(false)
         
         if (uploadResult.status === 'success' && uploadResult.url) {
@@ -112,17 +115,33 @@ export function FestivalForm() {
         }
       }
 
-      const result = await createFestivalAction({
-        ...festivalData,
-        poster: posterUrl,
-        userId: userId || "",
-      })
+      if (festival) {
+        // Update existing festival
+        const result = await updateFestivalAction(festival.id, {
+          ...festivalData,
+          poster: posterUrl,
+        })
 
-      if (result.status === "success") {
-        toast.success("Festival created successfully!")
-        router.push("/festivals")
+        if (result.status === "success") {
+          toast.success("Festival updated successfully!")
+          router.push("/festivals")
+        } else {
+          toast.error(result.message)
+        }
       } else {
-        toast.error(result.message)
+        // Create new festival
+        const result = await createFestivalAction({
+          ...festivalData,
+          poster: posterUrl,
+          userId: userId || "",
+        })
+
+        if (result.status === "success") {
+          toast.success("Festival created successfully!")
+          router.push("/festivals")
+        } else {
+          toast.error(result.message)
+        }
       }
     } catch (error) {
       console.error("Error saving festival information:", error)
@@ -133,12 +152,12 @@ export function FestivalForm() {
   }
 
   async function handleDelete() {
+    if (!festival) return
+    
     setIsSubmitting(true)
 
     try {
-      // TODO: Get actual festival ID from props or context
-      const festivalId = "festival-id"
-      const result = await deleteFestivalAction(festivalId)
+      const result = await deleteFestivalAction(festival.id)
 
       if (result.status === "success") {
         toast.success("Festival deleted successfully!")

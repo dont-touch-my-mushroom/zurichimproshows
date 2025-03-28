@@ -18,9 +18,10 @@ export const festivalsTable = pgTable("festivals", {
   poster: text("poster"),
   description: text("description").notNull(),
   slogan: text("slogan"),
-  languages: text("languages").array().notNull(),
+  languages: text("languages").array(),
   accommodationOffered: boolean("accommodation_offered").default(false).notNull(),
   mixerShows: boolean("mixer_shows").default(false).notNull(),
+  email: text("email"),
 });
 
 export type InsertFestival = typeof festivalsTable.$inferInsert;

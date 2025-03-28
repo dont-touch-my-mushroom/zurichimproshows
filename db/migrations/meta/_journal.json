@@ -8,6 +8,13 @@
       "when": 1743008857131,
       "tag": "0000_huge_frightful_four",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1743162836997,
+      "tag": "0001_greedy_pyro",
+      "breakpoints": true
     }
   ]
 }

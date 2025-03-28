@@ -15,5 +15,6 @@ CREATE TABLE "festivals" (
 	"slogan" text,
 	"languages" text[] NOT NULL,
 	"accommodation_offered" boolean DEFAULT false NOT NULL,
-	"mixer_shows" boolean DEFAULT false NOT NULL
+	"mixer_shows" boolean DEFAULT false NOT NULL,
+	"email" text
 );
