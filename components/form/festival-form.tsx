@@ -36,6 +36,7 @@ import {
 import { createFestivalAction, deleteFestivalAction } from "@/actions/festivals-actions"
 import { toast } from "sonner"
 import { useAuth } from "@clerk/nextjs"
+import { uploadImageAction } from "@/actions/upload-actions"
 
 const formSchema = z
   .object({
@@ -61,6 +62,7 @@ const formSchema = z
 export function FestivalForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [posterPreview, setPosterPreview] = useState<string | null>(null)
   const { userId } = useAuth()
 
@@ -87,10 +89,27 @@ export function FestivalForm() {
       const { poster, ...festivalData } = values
       let posterUrl: string | undefined
 
-      if (poster) {
-        // TODO: Implement file upload to storage service
-        // For now, we'll just use a placeholder
-        posterUrl = "/placeholder.svg"
+      if (poster && poster instanceof File) {
+        // Show uploading state
+        setIsUploading(true)
+        
+        // Upload and resize image to Google Cloud Storage using server action
+        const formData = new FormData()
+        formData.append('file', poster)
+        formData.append('directory', 'festival-posters')
+        
+        const uploadResult = await uploadImageAction(formData)
+        
+        // Hide uploading state
+        setIsUploading(false)
+        
+        if (uploadResult.status === 'success' && uploadResult.url) {
+          posterUrl = uploadResult.url
+        } else {
+          toast.error(uploadResult.message || 'Failed to upload poster image')
+          setIsSubmitting(false)
+          return
+        }
       }
 
       const result = await createFestivalAction({
@@ -305,16 +324,16 @@ export function FestivalForm() {
                 </div>
 
                 {posterPreview && (
-                  <div className="border rounded-md overflow-hidden h-40 flex items-center justify-center">
+                  <Card className="w-full max-w-[300px] h-[200px] relative overflow-hidden">
                     <Image
-                      src={posterPreview || "/placeholder.svg"}
+                      src={posterPreview}
                       alt="Poster preview"
                       className="object-contain"
                       fill
-                      sizes="(max-width: 768px) 100vw, 300px"
+                      sizes="300px"
                       style={{ objectFit: "contain" }}
                     />
-                  </div>
+                  </Card>
                 )}
               </div>
             </FormItem>
@@ -354,7 +373,7 @@ export function FestivalForm() {
                 <FormItem>
                   <FormLabel>Languages*</FormLabel>
                   <Select
-                    onValueChange={(value) => {
+                    onValueChange={(value: string) => {
                       const currentValues = field.value || []
                       if (!currentValues.includes(value)) {
                         field.onChange([...currentValues, value])
@@ -467,11 +486,16 @@ export function FestivalForm() {
               </AlertDialogContent>
             </AlertDialog>
 
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting || isUploading}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Saving...
+                </>
+              ) : isUploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading image...
                 </>
               ) : (
                 <>
