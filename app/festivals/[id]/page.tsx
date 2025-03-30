@@ -9,13 +9,14 @@ import Link from "next/link"
 import { languageOptions } from "@/lib/language-options"
 
 interface FestivalPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function FestivalPage({ params }: FestivalPageProps) {
-  const result = await getFestivalByIdAction(params.id)
+  const { id } = await params
+  const result = await getFestivalByIdAction(id)
   
   if (result.status !== "success" || !result.data) {
     notFound()

@@ -4,9 +4,9 @@ import { FestivalForm } from "@/components/form/festival-form"
 import { auth } from "@clerk/nextjs/server"
 
 interface EditFestivalPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EditFestivalPage({ params }: EditFestivalPageProps) {
@@ -16,7 +16,8 @@ export default async function EditFestivalPage({ params }: EditFestivalPageProps
     redirect("/sign-in")
   }
 
-  const result = await getFestivalByIdAction(params.id)
+  const { id } = await params
+  const result = await getFestivalByIdAction(id)
   
   if (result.status !== "success" || !result.data) {
     notFound()
