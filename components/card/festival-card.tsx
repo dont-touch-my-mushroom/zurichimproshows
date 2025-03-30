@@ -41,6 +41,9 @@ export function FestivalCard({ festival }: FestivalCardProps) {
       </div>
       <CardContent className="p-4">
         <h3 className="text-xl font-bold">{festival.name}</h3>
+        <div className="mt-1 text-sm text-muted-foreground">
+          {festival.city}, {festival.country}
+        </div>
         <div className="mt-1 flex items-center text-sm text-muted-foreground">
           <CalendarIcon className="mr-1 h-4 w-4" />
           <span>{formattedDateRange}</span>
