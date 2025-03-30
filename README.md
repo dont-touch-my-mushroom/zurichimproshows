@@ -37,6 +37,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 # TO-DOs
 
-- format the card date properly
 - Add a proper contact page
 - improve first carusel (low priority)
