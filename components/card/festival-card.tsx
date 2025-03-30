@@ -23,12 +23,14 @@ export function FestivalCard({ festival }: FestivalCardProps) {
     <Card className="overflow-hidden border shadow-sm">
       <div className="relative aspect-[16/9] overflow-hidden">
         {festival.poster ? (
-          <Image
-            src={festival.poster || "/placeholder.svg"}
-            alt={`${festival.name} poster`}
-            fill
-            className="object-cover"
-          />
+          <Link href={`/festivals/${festival.id}`}>
+            <Image
+              src={festival.poster || "/placeholder.svg"}
+              alt={`${festival.name} poster`}
+              fill
+              className="object-cover"
+            />
+          </Link>
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-muted">
             <span className="text-muted-foreground">No poster available</span>

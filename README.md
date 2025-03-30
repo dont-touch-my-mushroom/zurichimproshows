@@ -37,10 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 # TO-DOs
 
-- Handle the image upload into google cloud storage
-- Backfill the missing images into the database
-- handle feestival editing
-- Create a festival page
+- format the card date properly
 - Add a proper contact page
-- Move all images to google cloud storage
 - improve first carusel (low priority)
