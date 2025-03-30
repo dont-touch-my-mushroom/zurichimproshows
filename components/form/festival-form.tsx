@@ -124,7 +124,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
 
         if (result.status === "success") {
           toast.success("Festival updated successfully!")
-          router.push("/festivals")
+          router.push("/festivals/" + festival.id)
         } else {
           toast.error(result.message)
         }
@@ -138,7 +138,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
 
         if (result.status === "success") {
           toast.success("Festival created successfully!")
-          router.push("/festivals")
+          router.push("/festivals/" + result.data.id)
         } else {
           toast.error(result.message)
         }

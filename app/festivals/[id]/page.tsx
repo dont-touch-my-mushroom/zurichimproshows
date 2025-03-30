@@ -1,3 +1,5 @@
+"use client"
+
 import { notFound } from "next/navigation"
 import { getFestivalByIdAction } from "@/actions/festivals-actions"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,6 +9,10 @@ import { format } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
 import { languageOptions } from "@/lib/language-options"
+import { useAuth } from "@clerk/nextjs"
+import { SignInButton } from "@clerk/nextjs"
+import { useEffect, useState } from "react"
+import { SelectFestival } from "@/db/schema/festivals-schema"
 
 interface FestivalPageProps {
   params: Promise<{
@@ -14,20 +20,37 @@ interface FestivalPageProps {
   }>
 }
 
-export default async function FestivalPage({ params }: FestivalPageProps) {
-  const { id } = await params
-  const result = await getFestivalByIdAction(id)
-  
-  if (result.status !== "success" || !result.data) {
+export default function FestivalPage({ params }: FestivalPageProps) {
+  const { isSignedIn } = useAuth()
+  const [festival, setFestival] = useState<SelectFestival | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [festivalId, setFestivalId] = useState<string>("")
+
+  useEffect(() => {
+    const initialize = async () => {
+      const { id } = await params
+      setFestivalId(id)
+      const result = await getFestivalByIdAction(id)
+      if (result.status === "success" && result.data) {
+        setFestival(result.data)
+      }
+      setIsLoading(false)
+    }
+    initialize()
+  }, [params])
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (!festival) {
     notFound()
   }
 
-  const festival = result.data
-
   // Get language names from codes
-  const languages = festival.languages
+  const languages = festival.languages ? festival.languages
     .map((code: string) => languageOptions.find(lang => lang.code === code)?.name || code)
-    .join(", ")
+    .join(", ") : ""
 
   return (
     <div className="container py-8">
@@ -38,9 +61,20 @@ export default async function FestivalPage({ params }: FestivalPageProps) {
               <CardTitle className="text-3xl">{festival.name}</CardTitle>
               <p className="text-muted-foreground mt-1">{festival.city}, {festival.country}</p>
             </div>
-            <Button asChild>
-              <Link href={`/festivals/edit/${festival.id}`}>Edit Festival</Link>
-            </Button>
+            {isSignedIn ? (
+              <Button asChild>
+                <Link href={`/festivals/edit/${festivalId}`}>Edit Festival</Link>
+              </Button>
+            ) : (
+              <SignInButton mode="modal">
+                <Button variant="outline" className="group relative">
+                  Edit Festival
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Sign in to edit
+                  </span>
+                </Button>
+              </SignInButton>
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
