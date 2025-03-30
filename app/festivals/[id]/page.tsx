@@ -71,7 +71,7 @@ export default function FestivalPage({ params }: FestivalPageProps) {
                 <Button variant="outline" className="group relative">
                   Edit Festival
                   <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    You don't have permission to edit this festival
+                    You don&apos;t have permission to edit this festival
                   </span>
                 </Button>
             ) : (
