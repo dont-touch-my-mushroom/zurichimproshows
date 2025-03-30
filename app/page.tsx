@@ -123,21 +123,29 @@ export default async function Home() {
       <h1 className="text-4xl font-bold text-center py-8">Past Festivals</h1>
       <div className="container mx-auto pb-12">
         {limitedPastFestivals.length > 0 ? (
-          <Carousel className="w-full">
-            <CarouselContent>
-              {limitedPastFestivals.map((festival) => (
-                <CarouselItem key={festival.id} className="md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1">
-                    <FestivalCard festival={festival} />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="flex items-center justify-center w-full gap-2 py-4">
-              <CarouselPrevious />
-              <CarouselNext />
-            </div>
-          </Carousel>
+          <div className="relative">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {limitedPastFestivals.map((festival) => (
+                  <CarouselItem key={festival.id} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-1">
+                      <FestivalCard festival={festival} />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {/* Mobile arrows - overlaid */}
+              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 md:hidden">
+                <CarouselPrevious className="static translate-y-0" />
+                <CarouselNext className="static translate-y-0" />
+              </div>
+              {/* Desktop arrows - sides */}
+              <div className="absolute inset-y-0 left-0 right-0 hidden md:flex items-center justify-between px-4">
+                <CarouselPrevious className="static translate-y-0" />
+                <CarouselNext className="static translate-y-0" />
+              </div>
+            </Carousel>
+          </div>
         ) : (
           <p className="text-center text-lg text-muted-foreground">No past festivals found.</p>
         )}
