@@ -13,11 +13,13 @@ interface FestivalCardProps {
 }
 
 export function FestivalCard({ festival }: FestivalCardProps) {
-  // Format the dates
-  const formattedDateRange = `${format(new Date(festival.dateFrom), "d")}–${format(
-    new Date(festival.dateUntil),
-    "d MMM yyyy",
-  )}`
+  const dateFrom = new Date(festival.dateFrom)
+  const dateUntil = new Date(festival.dateUntil)
+  const isSameMonth = dateFrom.getMonth() === dateUntil.getMonth() && dateFrom.getFullYear() === dateUntil.getFullYear()
+  
+  const formattedDateRange = isSameMonth
+    ? `${format(dateFrom, "d")}–${format(dateUntil, "d MMM yyyy")}`
+    : `${format(dateFrom, "d MMM")}–${format(dateUntil, "d MMM yyyy")}`
 
   return (
     <Card className="overflow-hidden border shadow-sm">
