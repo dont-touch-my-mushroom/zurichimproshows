@@ -21,7 +21,7 @@ interface FestivalPageProps {
 }
 
 export default function FestivalPage({ params }: FestivalPageProps) {
-  const { isSignedIn } = useAuth()
+  const { isSignedIn, userId } = useAuth()
   const [festival, setFestival] = useState<SelectFestival | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [festivalId, setFestivalId] = useState<string>("")
@@ -52,6 +52,8 @@ export default function FestivalPage({ params }: FestivalPageProps) {
     .map((code: string) => languageOptions.find(lang => lang.code === code)?.name || code)
     .join(", ") : ""
 
+  const isOwner = isSignedIn && userId === festival.userId
+
   return (
     <div className="container py-8">
       <Card className="w-full max-w-4xl mx-auto">
@@ -61,10 +63,17 @@ export default function FestivalPage({ params }: FestivalPageProps) {
               <CardTitle className="text-3xl">{festival.name}</CardTitle>
               <p className="text-muted-foreground mt-1">{festival.city}, {festival.country}</p>
             </div>
-            {isSignedIn ? (
+            {isOwner ? (
               <Button asChild>
                 <Link href={`/festivals/edit/${festivalId}`}>Edit Festival</Link>
               </Button>
+            ) : isSignedIn ? (
+                <Button variant="outline" className="group relative">
+                  Edit Festival
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    You don't have permission to edit this festival
+                  </span>
+                </Button>
             ) : (
               <SignInButton mode="modal">
                 <Button variant="outline" className="group relative">
