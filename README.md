@@ -38,7 +38,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # TO-DOs
 
 
-- [ ] website and Instagram links. Not good in mobile 
 - [ ] Instagram link in form: make sure it's clear 
 - [ ] explanation about mixer shows
 - [ ] make sure the description can be rendered as markdown 

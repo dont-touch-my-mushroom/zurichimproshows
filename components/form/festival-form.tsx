@@ -47,7 +47,10 @@ const formSchema = z
     dateFrom: z.date({ required_error: "Start date is required." }),
     dateUntil: z.date({ required_error: "End date is required." }),
     website: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")),
-    instagram: z.string().optional(),
+    instagram: z.string()
+      .regex(/^[a-zA-Z0-9._]{1,30}$/, { message: "Invalid Instagram handle format" })
+      .optional()
+      .or(z.literal("")),
     poster: z.any().optional(),
     description: z.string().min(10, { message: "Description must be at least 10 characters." }),
     slogan: z.string().optional(),
@@ -326,8 +329,17 @@ export function FestivalForm({ festival }: FestivalFormProps) {
                   <FormItem>
                     <FormLabel>Instagram</FormLabel>
                     <FormControl>
-                      <Input placeholder="@festivalhandle" {...field} />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
+                        <Input 
+                          placeholder="myInstagramUser" 
+                          className="pl-8"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value.replace(/^@/, ""))}
+                        />
+                      </div>
                     </FormControl>
+                    <FormDescription>Enter your Instagram handle without the @ symbol</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
