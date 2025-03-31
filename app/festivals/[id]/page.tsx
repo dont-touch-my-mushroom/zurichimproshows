@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { getFestivalByIdAction } from "@/actions/festivals-actions"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CalendarIcon, Globe, Instagram } from "lucide-react"
+import { CalendarIcon, Globe, Instagram, InfoIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { languageOptions } from "@/lib/language-options"
@@ -13,6 +13,12 @@ import { SignInButton } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import { SelectFestival } from "@/db/schema/festivals-schema"
 import { formatDateRange } from "@/lib/date-utils"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface FestivalPageProps {
   params: Promise<{
@@ -137,7 +143,21 @@ export default function FestivalPage({ params }: FestivalPageProps) {
               <h3 className="font-semibold mb-2">Features</h3>
               <ul className="space-y-1 text-muted-foreground">
                 {festival.accommodationOffered && <li>✓ Accommodation offered</li>}
-                {festival.mixerShows && <li>✓ Mixer shows included</li>}
+                {festival.mixerShows && (
+                  <li className="flex items-center gap-1">
+                    ✓ Mixer shows included
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <InfoIcon className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Mixer shows are shows where participants of workshops can showcase their work.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </li>
+                )}
               </ul>
             </div>
           </div>

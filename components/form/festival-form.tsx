@@ -475,7 +475,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Mixer Shows</FormLabel>
-                      <FormDescription>Does your festival include mixer shows?</FormDescription>
+                      <FormDescription>Does your festival include mixer shows? Mixer shows are shows where participants of workshops can showcase their work.</FormDescription>
                     </div>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
