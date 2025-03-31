@@ -37,6 +37,16 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 # TO-DOs
 
+
+- [ ] Change icon
+- [ ] change page title
+- [ ] check carousel and header. Not deployed?
+- [ ] carousel images
+- [ ] carousel texts
+- [ ] website and Instagram links. Not good in mobile 
+- [ ] Instagram link in form: make sure it's clear 
+- [ ] explanation about mixer shows
+- [ ] make sure the description can be rendered as markdown 
 - add pagination for the list?
 - limit the past festival carousel to 10 events?
 - improve first carusel (low priority)
