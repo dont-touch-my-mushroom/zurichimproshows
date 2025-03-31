@@ -1,6 +1,5 @@
 import React from 'react';
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { SignInButton } from '@clerk/nextjs';
 
 export default async function ContactPage() {
@@ -14,7 +13,7 @@ export default async function ContactPage() {
           {userId ? (
             <>
               <p className="text-gray-600 mb-6">
-                Have questions? We'd love to hear from you.
+                Have questions? We&apos;d love to hear from you.
               </p>
               <div className="mt-4">
                 <a 
