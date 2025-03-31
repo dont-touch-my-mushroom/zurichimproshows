@@ -5,7 +5,6 @@ import { getFestivalByIdAction } from "@/actions/festivals-actions"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CalendarIcon, Globe, Instagram } from "lucide-react"
-import { format } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
 import { languageOptions } from "@/lib/language-options"
@@ -13,6 +12,7 @@ import { useAuth } from "@clerk/nextjs"
 import { SignInButton } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import { SelectFestival } from "@/db/schema/festivals-schema"
+import { formatDateRange } from "@/lib/date-utils"
 
 interface FestivalPageProps {
   params: Promise<{
@@ -99,25 +99,25 @@ export default function FestivalPage({ params }: FestivalPageProps) {
             </div>
           )}
 
-          <div className="flex items-center gap-4 text-muted-foreground">
+          <div className="space-y-2 text-muted-foreground">
             <div className="flex items-center gap-2">
               <CalendarIcon className="h-4 w-4" />
-              <span>
-                {format(new Date(festival.dateFrom), "PPP")} - {format(new Date(festival.dateUntil), "PPP")}
-              </span>
+              <span>{formatDateRange(festival.dateFrom, festival.dateUntil)}</span>
             </div>
-            {festival.website && (
-              <Link href={festival.website} target="_blank" className="flex items-center gap-2 hover:text-primary">
-                <Globe className="h-4 w-4" />
-                <span>Website</span>
-              </Link>
-            )}
-            {festival.instagram && (
-              <Link href={`https://instagram.com/${festival.instagram}`} target="_blank" className="flex items-center gap-2 hover:text-primary">
-                <Instagram className="h-4 w-4" />
-                <span>@{festival.instagram}</span>
-              </Link>
-            )}
+            <div className="flex items-center gap-4">
+              {festival.website && (
+                <Link href={festival.website} target="_blank" className="flex items-center gap-2 hover:text-primary">
+                  <Globe className="h-4 w-4" />
+                  <span>Website</span>
+                </Link>
+              )}
+              {festival.instagram && (
+                <Link href={`https://instagram.com/${festival.instagram}`} target="_blank" className="flex items-center gap-2 hover:text-primary">
+                  <Instagram className="h-4 w-4" />
+                  <span>@{festival.instagram}</span>
+                </Link>
+              )}
+            </div>
           </div>
 
           {festival.slogan && (

@@ -1,26 +1,16 @@
 import Image from "next/image"
 import Link from "next/link"
 import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SelectFestival } from "@/db/schema/festivals-schema"
-
+import { formatDateRange } from "@/lib/date-utils"
 
 interface FestivalCardProps {
   festival: SelectFestival
 }
 
 export function FestivalCard({ festival }: FestivalCardProps) {
-  const dateFrom = new Date(festival.dateFrom)
-  const dateUntil = new Date(festival.dateUntil)
-  const isSameMonth = dateFrom.getMonth() === dateUntil.getMonth() && dateFrom.getFullYear() === dateUntil.getFullYear()
-  
-  const formattedDateRange = isSameMonth
-    ? `${format(dateFrom, "d")}–${format(dateUntil, "d MMM yyyy")}`
-    : `${format(dateFrom, "d MMM")}–${format(dateUntil, "d MMM yyyy")}`
-
   return (
     <Card className="overflow-hidden border shadow-sm">
       <div className="relative aspect-[16/9] overflow-hidden">
@@ -46,7 +36,7 @@ export function FestivalCard({ festival }: FestivalCardProps) {
         </div>
         <div className="mt-1 flex items-center text-sm text-muted-foreground">
           <CalendarIcon className="mr-1 h-4 w-4" />
-          <span>{formattedDateRange}</span>
+          <span>{formatDateRange(festival.dateFrom, festival.dateUntil)}</span>
         </div>
         {festival.slogan && <p className="mt-2 text-sm text-muted-foreground">{festival.slogan}</p>}
       </CardContent>
