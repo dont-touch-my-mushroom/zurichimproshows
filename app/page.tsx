@@ -14,40 +14,19 @@ import { SelectFestival } from "@/db/schema/festivals-schema";
 
 const slides = [
   {
-    image: "https://improfestivals.com/assets/images/slider/bg-3.jpg",
-    title: "Welcome to Impro Festivals",
-    subtitle: "Experience the magic of improvisation",
-    ctaText: "Learn More",
-    ctaLink: "/about"
+    image: "/bg-3.jpg",
+    title: "Impro Festivals all around the world",
+    subtitle: "Check the upcoming dates",
+    ctaText: "Festivals",
+    ctaLink: "/list"
   },
   {
-    image: "https://improfestivals.com/assets/images/slider/bg-3.jpg",
-    title: "Join Our Community",
-    subtitle: "Connect with fellow improvisers",
-    ctaText: "Get Started",
-    ctaLink: "/register"
+    image: "/bg-3.jpg",
+    title: "You say Improv, I say Impro",
+    subtitle: "But we understand each other",
+    ctaText: "Advertise your festival",
+    ctaLink: "/festival-form"
   },
-  {
-    image: "https://improfestivals.com/assets/images/slider/bg-3.jpg",
-    title: "Upcoming Events",
-    subtitle: "Don't miss out on our next festival",
-    ctaText: "View Events",
-    ctaLink: "/events"
-  },
-  {
-    image: "https://improfestivals.com/assets/images/slider/bg-3.jpg",
-    title: "Workshops & Training",
-    subtitle: "Enhance your improvisation skills",
-    ctaText: "Browse Courses",
-    ctaLink: "/workshops"
-  },
-  {
-    image: "https://improfestivals.com/assets/images/slider/bg-3.jpg",
-    title: "Support Impro Festivals",
-    subtitle: "Help us grow the community",
-    ctaText: "Donate",
-    ctaLink: "/donate"
-  }
 ];
 
 export default async function Home() {

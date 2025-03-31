@@ -38,8 +38,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # TO-DOs
 
 
-- [ ] Change icon
-- [ ] change page title
 - [ ] check carousel and header. Not deployed?
 - [ ] carousel images
 - [ ] carousel texts
