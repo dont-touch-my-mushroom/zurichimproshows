@@ -104,6 +104,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [posterPreview, setPosterPreview] = useState<string | null>(festival?.poster || null)
+  const [formError, setFormError] = useState<string | null>(null)
   const { userId } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -126,6 +127,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
+    setFormError(null)
 
     try {
       const { poster, ...festivalData } = values
@@ -145,6 +147,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
           posterUrl = uploadResult.url
         } else {
           toast.error(uploadResult.message || 'Failed to upload poster image')
+          setFormError(uploadResult.message || 'Failed to upload poster image')
           setIsSubmitting(false)
           return
         }
@@ -181,6 +184,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
     } catch (error) {
       console.error("Error saving festival information:", error)
       toast.error("Failed to save festival information. Please try again.")
+      setFormError("Failed to save festival information. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -234,7 +238,10 @@ export function FestivalForm({ festival }: FestivalFormProps) {
         <CardTitle>Festival Information</CardTitle>
       </CardHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
+          console.error("Validation errors:", errors)
+          setFormError("Please fix the validation errors above before submitting.")
+        })}>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
@@ -530,55 +537,63 @@ export function FestivalForm({ festival }: FestivalFormProps) {
             </div>
           </CardContent>
 
-          <CardFooter className="flex justify-between">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" type="button" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Deleting...
-                    </>
-                  ) : (
-                    <>
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete Festival
-                    </>
-                  )}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete the festival and all associated data.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+          <CardFooter className="flex flex-col space-y-4">
+            <div className="flex justify-between w-full">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" type="button" disabled={isSubmitting} className="cursor-pointer">
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Deleting...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete Festival
+                      </>
+                    )}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the festival and all associated data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
-            <Button type="submit" disabled={isSubmitting || isUploading}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : isUploading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Uploading image...
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Festival
-                </>
-              )}
-            </Button>
+              <Button type="submit" disabled={isSubmitting || isUploading} className="cursor-pointer">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : isUploading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Uploading image...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Save Festival
+                  </>
+                )}
+              </Button>
+            </div>
+            
+            {formError && (
+              <div className="text-destructive text-sm font-medium w-full text-right">
+                {formError}
+              </div>
+            )}
           </CardFooter>
         </form>
       </Form>
