@@ -13,12 +13,15 @@ import { SignInButton } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import { SelectFestival } from "@/db/schema/festivals-schema"
 import { formatDateRange } from "@/lib/date-utils"
+import ReactMarkdown from "react-markdown"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import remarkGfm from "remark-gfm"
+import rehypeRaw from "rehype-raw"
 
 interface FestivalPageProps {
   params: Promise<{
@@ -131,7 +134,39 @@ export default function FestivalPage({ params }: FestivalPageProps) {
           )}
 
           <div className="prose max-w-none">
-            <p>{festival.description}</p>
+
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+                components={{
+                  h1: ({...props}) => <h1 className="text-2xl font-bold my-4" {...props} />,
+                  h2: ({...props}) => <h2 className="text-xl font-bold my-3" {...props} />,
+                  h3: ({...props}) => <h3 className="text-lg font-bold my-2" {...props} />,
+                  a: ({...props}) => <a className="text-blue-500 hover:underline" {...props} />,
+                  ul: ({...props}) => <ul className="list-disc pl-5 my-2" {...props} />,
+                  ol: ({...props}) => <ol className="list-decimal pl-5 my-2" {...props} />,
+                  blockquote: ({...props}) => <blockquote className="pl-4 border-l-4 border-gray-300 my-2 italic" {...props} />,
+                  code: ({className, children, ...props}: any) => {
+                    const match = /language-(\w+)/.exec(className || '')
+                    return props.inline ? (
+                      <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded" {...props}>
+                        {children}
+                      </code>
+                    ) : (
+                      <pre className={cn("bg-gray-100 dark:bg-gray-800 p-2 rounded my-2", className)}>
+                        <code className={match ? `language-${match[1]}` : ''} {...props}>
+                          {children}
+                        </code>
+                      </pre>
+                    )
+                  },
+                  p: ({...props}) => <p className="my-2" {...props} />,
+                  hr: () => <hr className="my-4 border-t border-gray-300 dark:border-gray-700" />,
+                  img: ({...props}) => <img className="max-w-full rounded my-2" {...props} />
+                }}
+              >
+                {festival.description}
+              </ReactMarkdown>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
