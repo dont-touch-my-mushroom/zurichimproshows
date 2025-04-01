@@ -103,25 +103,29 @@ export default async function Home() {
       <div className="container mx-auto pb-12">
         {limitedPastFestivals.length > 0 ? (
           <div className="relative">
-            <Carousel className="w-full">
+            <Carousel className="w-full" 
+              opts={{ 
+                dragFree: true,
+                watchDrag: false
+              }}>
               <CarouselContent>
                 {limitedPastFestivals.map((festival) => (
                   <CarouselItem key={festival.id} className="md:basis-1/2 lg:basis-1/3">
-                    <div className="p-1">
+                    <div className="p-1 pointer-events-auto">
                       <FestivalCard festival={festival} />
                     </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
               {/* Mobile arrows - overlaid */}
-              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 md:hidden">
-                <CarouselPrevious className="static translate-y-0" />
-                <CarouselNext className="static translate-y-0" />
+              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 md:hidden pointer-events-none">
+                <CarouselPrevious className="static translate-y-0 pointer-events-auto" />
+                <CarouselNext className="static translate-y-0 pointer-events-auto" />
               </div>
               {/* Desktop arrows - sides */}
-              <div className="absolute inset-y-0 left-0 right-0 hidden md:flex items-center justify-between px-4">
-                <CarouselPrevious className="static translate-y-0" />
-                <CarouselNext className="static translate-y-0" />
+              <div className="absolute inset-y-0 left-0 right-0 hidden md:flex items-center justify-between px-4 pointer-events-none">
+                <CarouselPrevious className="static translate-y-0 pointer-events-auto" />
+                <CarouselNext className="static translate-y-0 pointer-events-auto" />
               </div>
             </Carousel>
           </div>
