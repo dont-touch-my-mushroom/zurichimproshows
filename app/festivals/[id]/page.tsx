@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/tooltip"
 import remarkGfm from "remark-gfm"
 import rehypeRaw from "rehype-raw"
+import { cn } from "@/lib/utils"
 
 interface FestivalPageProps {
   params: Promise<{
@@ -146,7 +147,7 @@ export default function FestivalPage({ params }: FestivalPageProps) {
                   ul: ({...props}) => <ul className="list-disc pl-5 my-2" {...props} />,
                   ol: ({...props}) => <ol className="list-decimal pl-5 my-2" {...props} />,
                   blockquote: ({...props}) => <blockquote className="pl-4 border-l-4 border-gray-300 my-2 italic" {...props} />,
-                  code: ({className, children, ...props}: any) => {
+                  code: ({className, children, ...props}: React.HTMLProps<HTMLElement> & {inline?: boolean}) => {
                     const match = /language-(\w+)/.exec(className || '')
                     return props.inline ? (
                       <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded" {...props}>
@@ -162,7 +163,20 @@ export default function FestivalPage({ params }: FestivalPageProps) {
                   },
                   p: ({...props}) => <p className="my-2" {...props} />,
                   hr: () => <hr className="my-4 border-t border-gray-300 dark:border-gray-700" />,
-                  img: ({...props}) => <img className="max-w-full rounded my-2" {...props} />
+                  img: ({src, alt, ...props}) => {
+                    if (src && (src.startsWith('http://') || src.startsWith('https://'))) {
+                      return (
+                        <Image 
+                          src={src} 
+                          alt={alt || 'Festival image'} 
+                          width={800} 
+                          height={600} 
+                          className="max-w-full rounded my-2"
+                        />
+                      );
+                    }
+                    return <img src={src} alt={alt || 'Festival image'} className="max-w-full rounded my-2" {...props} />;
+                  }
                 }}
               >
                 {festival.description}

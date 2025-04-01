@@ -57,7 +57,7 @@ export function MarkdownEditor({
                   ul: ({...props}) => <ul className="list-disc pl-5 my-2" {...props} />,
                   ol: ({...props}) => <ol className="list-decimal pl-5 my-2" {...props} />,
                   blockquote: ({...props}) => <blockquote className="pl-4 border-l-4 border-gray-300 my-2 italic" {...props} />,
-                  code: ({className, children, ...props}: any) => {
+                  code: ({className, children, ...props}: React.HTMLProps<HTMLElement> & {inline?: boolean}) => {
                     const match = /language-(\w+)/.exec(className || '')
                     return props.inline ? (
                       <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded" {...props}>
@@ -73,7 +73,11 @@ export function MarkdownEditor({
                   },
                   p: ({...props}) => <p className="my-2" {...props} />,
                   hr: () => <hr className="my-4 border-t border-gray-300 dark:border-gray-700" />,
-                  img: ({...props}) => <img className="max-w-full rounded my-2" {...props} />
+                  img: ({src, alt, ...props}) => {
+                    // We keep the basic img tag for markdown preview since these are often relative paths
+                    // or not full URLs suitable for Next Image
+                    return <img src={src} alt={alt || 'Preview image'} className="max-w-full rounded my-2" {...props} />;
+                  }
                 }}
               >
                 {value}
