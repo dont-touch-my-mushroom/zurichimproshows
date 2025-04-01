@@ -38,6 +38,38 @@ import { toast } from "sonner"
 import { useAuth } from "@clerk/nextjs"
 import { uploadImageAction } from "@/actions/upload-actions"
 import { SelectFestival } from "@/db/schema/festivals-schema"
+import { MarkdownEditor } from "@/components/ui/markdown-editor"
+
+const helpText = `# Heading 1
+## Heading 2
+### Heading 3
+
+**Bold text** or __bold text__
+*Italic text* or _italic text_
+
+- Bullet list item
+- Another item
+  - Nested item
+
+1. Numbered list
+2. Second item
+
+[Link text](https://example.com)
+
+> Blockquote text
+
+\`inline code\`
+
+\`\`\`
+// Code block
+function example() {
+  return "Hello world";
+}
+\`\`\`
+
+---
+Horizontal rule above
+`;
 
 const formSchema = z
   .object({
@@ -375,8 +407,20 @@ export function FestivalForm({ festival }: FestivalFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description*</FormLabel>
+                    <FormDescription>You can use Markdown to format your description.</FormDescription>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      <details>
+                        <summary className="cursor-pointer hover:text-foreground">Markdown Help</summary>
+                        <pre className="p-2 mt-1 text-xs bg-muted rounded-md overflow-auto">{helpText}</pre>
+                      </details>
+                    </div>
                   <FormControl>
-                    <Textarea placeholder="Describe your festival..." className="min-h-[120px]" {...field} />
+                    <MarkdownEditor 
+                      value={field.value} 
+                      onChange={field.onChange}
+                      placeholder="Describe your festival... (Markdown supported)"
+                      className="min-h-[250px]" 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
