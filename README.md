@@ -38,7 +38,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # TO-DOs
 
 
-- [ ] make sure the description can be rendered as markdown 
 - add pagination for the list?
-- limit the past festival carousel to 10 events?
 - improve first carusel (low priority)

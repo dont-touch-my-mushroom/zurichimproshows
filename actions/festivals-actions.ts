@@ -78,9 +78,9 @@ export async function getUpcomingFestivalsAction(startDate: Date): Promise<Actio
   }
 }
 
-export async function getPastFestivalsAction(startDate: Date): Promise<ActionState> {
+export async function getPastFestivalsAction(startDate: Date, limit: number): Promise<ActionState> {
   try {
-    const festivals = await getPastFestivals(startDate);
+    const festivals = await getPastFestivals(startDate, limit);
     return { status: "success", message: "Past festivals retrieved successfully", data: festivals };
   } catch (error) {
     console.error("Error getting past festivals:", error);

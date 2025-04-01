@@ -55,10 +55,11 @@ export async function getUpcomingFestivals(startDate: Date): Promise<SelectFesti
     .orderBy(festivalsTable.dateFrom);
 }
 
-export async function getPastFestivals(startDate: Date): Promise<SelectFestival[]> {
+export async function getPastFestivals(startDate: Date, limit: number): Promise<SelectFestival[]> {
   return db
     .select()
     .from(festivalsTable)
     .where(lte(festivalsTable.dateFrom, startDate))
-    .orderBy(desc(festivalsTable.dateFrom));
+    .orderBy(desc(festivalsTable.dateFrom))
+    .limit(limit);
 } 

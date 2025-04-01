@@ -36,12 +36,8 @@ export default async function Home() {
   const upcomingFestivals = (upcomingResponse.status === "success" ? upcomingResponse.data : []) as SelectFestival[];
   
   // Fetch past festivals
-  const pastResponse = await getPastFestivalsAction(today);
+  const pastResponse = await getPastFestivalsAction(today, 10);
   const pastFestivals = (pastResponse.status === "success" ? pastResponse.data : []) as SelectFestival[];
-  
-  // Limit to 10 items
-  const limitedUpcomingFestivals = upcomingFestivals.slice(0, 10);
-  const limitedPastFestivals = pastFestivals.slice(0, 10);
 
   return (
     <div className="flex flex-col">
@@ -82,9 +78,9 @@ export default async function Home() {
       </Carousel>
       <h1 className="text-4xl font-bold text-center py-8">Upcoming Festivals</h1>
       <div className="container mx-auto pb-12">
-        {limitedUpcomingFestivals.length > 0 ? (
+        {upcomingFestivals.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {limitedUpcomingFestivals.map((festival) => (
+            {upcomingFestivals.map((festival) => (
               <FestivalCard key={festival.id} festival={festival} />
             ))}
           </div>
@@ -101,7 +97,7 @@ export default async function Home() {
 
       <h1 className="text-4xl font-bold text-center py-8">Past Festivals</h1>
       <div className="container mx-auto pb-12">
-        {limitedPastFestivals.length > 0 ? (
+        {pastFestivals.length > 0 ? (
           <div className="relative">
             <Carousel className="w-full" 
               opts={{ 
@@ -109,7 +105,7 @@ export default async function Home() {
                 watchDrag: false
               }}>
               <CarouselContent>
-                {limitedPastFestivals.map((festival) => (
+                {pastFestivals.map((festival) => (
                   <CarouselItem key={festival.id} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-1 pointer-events-auto">
                       <FestivalCard festival={festival} />
