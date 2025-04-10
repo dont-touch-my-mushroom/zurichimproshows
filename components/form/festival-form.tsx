@@ -199,7 +199,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
 
       if (result.status === "success") {
         toast.success("Festival deleted successfully!")
-        router.push("/festivals")
+        router.push("/")
       } else {
         toast.error(result.message)
       }
