@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation"
-import { getFestivalByIdAction } from "@/actions/festivals-actions"
+import { getFestivalByIdAction, canEditAction } from "@/actions/festivals-actions"
 import { FestivalForm } from "@/components/form/festival-form"
 import { auth } from "@clerk/nextjs/server"
 
@@ -26,8 +26,9 @@ export default async function EditFestivalPage({ params }: EditFestivalPageProps
   const festival = result.data
 
   // Check if the authenticated user owns this festival
-  if (festival.userId !== userId || userId !== process.env.ADMIN_USER) {
-    redirect("/festivals")
+  const canEdit = await canEditAction(festival.userId)
+  if (!canEdit) {
+    redirect("/list")
   }
 
   return (

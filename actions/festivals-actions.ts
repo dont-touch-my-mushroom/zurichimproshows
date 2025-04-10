@@ -4,6 +4,7 @@ import { createFestival, deleteFestival, getFestivalById, getFestivalsByUserId, 
 import { InsertFestival } from "@/db/schema/festivals-schema";
 import { ActionState } from "@/types";
 import { revalidatePath } from "next/cache";
+import { auth } from "@clerk/nextjs/server";
 
 export async function createFestivalAction(festival: InsertFestival): Promise<ActionState> {
   try {
@@ -86,4 +87,13 @@ export async function getPastFestivalsAction(startDate: Date, limit: number): Pr
     console.error("Error getting past festivals:", error);
     return { status: "error", message: "Failed to get past festivals" };
   }
+}
+
+export async function canEditAction(festivalUserId: string): Promise<boolean> {
+  const { userId } = await auth();
+  if (!userId) {
+    return false; // Not logged in, cannot edit
+  }
+  // Allow editing if the user owns the festival OR if the user is the admin
+  return festivalUserId === userId || userId === process.env.ADMIN_USER;
 } 
