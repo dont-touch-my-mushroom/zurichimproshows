@@ -22,14 +22,13 @@ import rehypeRaw from "rehype-raw"
 import { cn } from "@/lib/utils"
 
 interface FestivalPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function FestivalPage({ params }: FestivalPageProps) {
   const user = await currentUser()
-  const userId = user?.id
   const isSignedIn = !!user
   
   const {id} = await params
@@ -137,19 +136,29 @@ export default async function FestivalPage({ params }: FestivalPageProps) {
                   },
                   p: ({...props}) => <p className="my-2" {...props} />,
                   hr: () => <hr className="my-4 border-t border-gray-300 dark:border-gray-700" />,
-                  img: ({src, alt, ...props}) => {
+                  img: ({src, alt}) => {
                     if (src && (src.startsWith('http://') || src.startsWith('https://'))) {
                       return (
-                        <Image 
-                          src={src} 
-                          alt={alt || 'Festival image'} 
-                          width={800} 
-                          height={600} 
-                          className="max-w-full rounded my-2"
-                        />
+                        <div className="relative w-full h-[400px] my-2">
+                          <Image 
+                            src={src} 
+                            alt={alt || 'Festival image'} 
+                            fill
+                            className="object-contain rounded"
+                          />
+                        </div>
                       );
                     }
-                    return <img src={src} alt={alt || 'Festival image'} className="max-w-full rounded my-2" {...props} />;
+                    return (
+                      <div className="relative w-full h-[400px] my-2">
+                        <Image 
+                          src={src || ''} 
+                          alt={alt || 'Festival image'} 
+                          fill
+                          className="object-contain rounded"
+                        />
+                      </div>
+                    );
                   }
                 }}
               >

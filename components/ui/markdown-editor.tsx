@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm"
 import rehypeRaw from "rehype-raw"
 import { cn } from "@/lib/utils"
 import { Textarea } from "@/components/ui/textarea"
+import Image from "next/image"
 
 interface MarkdownEditorProps {
   value: string
@@ -74,8 +75,22 @@ export function MarkdownEditor({
                   p: ({...props}) => <p className="my-2" {...props} />,
                   hr: () => <hr className="my-4 border-t border-gray-300 dark:border-gray-700" />,
                   img: ({src, alt, ...props}) => {
-                    // We keep the basic img tag for markdown preview since these are often relative paths
-                    // or not full URLs suitable for Next Image
+                    // For the preview component, we need to handle both external and relative URLs
+                    if (src && (src.startsWith('http://') || src.startsWith('https://'))) {
+                      return (
+                        <div className="relative w-full h-[250px] my-2">
+                          <Image 
+                            src={src} 
+                            alt={alt || 'Preview image'} 
+                            fill
+                            className="object-contain rounded"
+                          />
+                        </div>
+                      );
+                    }
+                    // For relative paths or non-URLs, we still need to use img for the preview
+                    // Add a comment to silence the ESLint warning
+                    // eslint-disable-next-line @next/next/no-img-element
                     return <img src={src} alt={alt || 'Preview image'} className="max-w-full rounded my-2" {...props} />;
                   }
                 }}
