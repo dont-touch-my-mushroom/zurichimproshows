@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container mx-auto flex flex-col items-center justify-center">
         <div className="w-64 h-24 relative mb-4">
           <Image
-            src="https://improfestivals.com/assets/images/logo_name_white.png"
+            src="https://storage.googleapis.com/improfestivals_images/logo_name_white.png"
             alt="Impro Festivals Logo"
             fill
             sizes="(max-width: 768px) 100vw, 256px"
