@@ -13,7 +13,7 @@ export default async function EditFestivalPage({ params }: EditFestivalPageProps
   const { userId } = await auth()
   
   if (!userId) {
-    redirect("/sign-in")
+    redirect("/")
   }
 
   const { id } = await params
@@ -26,7 +26,7 @@ export default async function EditFestivalPage({ params }: EditFestivalPageProps
   const festival = result.data
 
   // Check if the authenticated user owns this festival
-  if (festival.userId !== userId) {
+  if (festival.userId !== userId || userId !== process.env.ADMIN_USER) {
     redirect("/festivals")
   }
 
