@@ -10,6 +10,8 @@ export async function createFestivalAction(festival: InsertFestival): Promise<Ac
   try {
     const newFestival = await createFestival(festival);
     revalidatePath("/festivals");
+    revalidatePath("/");
+    revalidatePath("/list");
     return { status: "success", message: "Festival created successfully", data: newFestival };
   } catch (error) {
     console.error("Error creating festival:", error);
@@ -41,6 +43,8 @@ export async function updateFestivalAction(id: string, data: Partial<InsertFesti
   try {
     const updatedFestival = await updateFestival(id, data);
     revalidatePath("/festivals");
+    revalidatePath("/");
+    revalidatePath("/list");
     return { status: "success", message: "Festival updated successfully", data: updatedFestival };
   } catch (error) {
     console.error("Error updating festival:", error);
@@ -52,6 +56,8 @@ export async function deleteFestivalAction(id: string): Promise<ActionState> {
   try {
     await deleteFestival(id);
     revalidatePath("/festivals");
+    revalidatePath("/");
+    revalidatePath("/list");
     return { status: "success", message: "Festival deleted successfully" };
   } catch (error) {
     console.error("Error deleting festival:", error);
