@@ -1,16 +1,13 @@
-"use client"
-
 import { notFound } from "next/navigation"
-import { getFestivalByIdAction } from "@/actions/festivals-actions"
+import { getFestivalByIdAction, canEditAction } from "@/actions/festivals-actions"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CalendarIcon, Globe, Instagram, InfoIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { languageOptions } from "@/lib/language-options"
-import { useAuth } from "@clerk/nextjs"
+import { currentUser } from "@clerk/nextjs/server"
 import { SignInButton } from "@clerk/nextjs"
-import { useEffect, useState } from "react"
 import { SelectFestival } from "@/db/schema/festivals-schema"
 import { formatDateRange } from "@/lib/date-utils"
 import ReactMarkdown from "react-markdown"
@@ -25,44 +22,30 @@ import rehypeRaw from "rehype-raw"
 import { cn } from "@/lib/utils"
 
 interface FestivalPageProps {
-  params: Promise<{
+  params: {
     id: string
-  }>
+  }
 }
 
-export default function FestivalPage({ params }: FestivalPageProps) {
-  const { isSignedIn, userId } = useAuth()
-  const [festival, setFestival] = useState<SelectFestival | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [festivalId, setFestivalId] = useState<string>("")
-
-  useEffect(() => {
-    const initialize = async () => {
-      const { id } = await params
-      setFestivalId(id)
-      const result = await getFestivalByIdAction(id)
-      if (result.status === "success" && result.data) {
-        setFestival(result.data)
-      }
-      setIsLoading(false)
-    }
-    initialize()
-  }, [params])
-
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
-
-  if (!festival) {
+export default async function FestivalPage({ params }: FestivalPageProps) {
+  const user = await currentUser()
+  const userId = user?.id
+  const isSignedIn = !!user
+  
+  const {id} = await params
+  const result = await getFestivalByIdAction(id)
+  
+  if (result.status !== "success" || !result.data) {
     notFound()
   }
+  
+  const festival: SelectFestival = result.data
+  const canEdit = await canEditAction(festival.userId)
 
   // Get language names from codes
   const languages = festival.languages ? festival.languages
     .map((code: string) => languageOptions.find(lang => lang.code === code)?.name || code)
     .join(", ") : ""
-
-  const isOwner = isSignedIn && userId === festival.userId
 
   return (
     <div className="container py-8">
@@ -73,27 +56,18 @@ export default function FestivalPage({ params }: FestivalPageProps) {
               <CardTitle className="text-3xl">{festival.name}</CardTitle>
               <p className="text-muted-foreground mt-1">{festival.city}, {festival.country}</p>
             </div>
-            {isOwner ? (
+            
+            {/* Edit button with server-side conditional rendering */}
+            {canEdit ? (
               <Button asChild>
-                <Link href={`/festivals/edit/${festivalId}`}>Edit Festival</Link>
+                <Link href={`/festivals/edit/${id}`}>Edit Festival</Link>
               </Button>
-            ) : isSignedIn ? (
-                <Button variant="outline" className="group relative">
-                  Edit Festival
-                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    You don&apos;t have permission to edit this festival
-                  </span>
-                </Button>
-            ) : (
+            ) : !isSignedIn ? (
               <SignInButton mode="modal">
-                <Button variant="outline" className="group relative">
-                  Edit Festival
-                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    Sign in to edit
-                  </span>
-                </Button>
+                <Button variant="outline">Edit Festival</Button>
               </SignInButton>
-            )}
+            ) : null}
+            
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
