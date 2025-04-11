@@ -183,7 +183,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
     } catch (error) {
       console.error("Error saving festival information:", error)
       toast.error("Failed to save festival information. Please try again.")
-      setFormError("Failed to save festival information. Please try again.")
+      setFormError(`Failed to save festival information. Please try again. ${error}`)
     } finally {
       setIsSubmitting(false)
     }
