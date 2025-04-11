@@ -124,6 +124,8 @@ export function FestivalForm({ festival }: FestivalFormProps) {
     },
   })
 
+  const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
     setFormError(null)
@@ -217,6 +219,17 @@ export function FestivalForm({ festival }: FestivalFormProps) {
       // Validate that the file is an image
       if (!file.type.startsWith("image/")) {
         toast.error("Please upload an image file");
+        e.target.value = ''; // Reset the input
+        return;
+      }
+
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error("File is too large. Maximum size is 3MB.");
+        e.target.value = ''; // Reset the input
+        // Optionally clear the preview if needed
+        // setPosterPreview(null);
+        // form.setValue("poster", undefined);
         return;
       }
       

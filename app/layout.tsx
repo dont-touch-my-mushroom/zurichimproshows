@@ -6,6 +6,7 @@ import Footer from "../components/layout/Footer";
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
+import { Toaster } from "sonner";
 
 
 const geistSans = Geist({
@@ -42,6 +43,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
