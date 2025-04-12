@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, ControllerRenderProps, FieldError } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { CalendarIcon, Loader2, Save, Trash2 } from "lucide-react"
-import { format, setDate, isValid, parse } from "date-fns"
+import { format, isValid, parse } from "date-fns"
 import Image from "next/image"
 import { DateRange } from "react-day-picker"
 import { Button } from "@/components/ui/button"
@@ -314,7 +314,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
             <FormField
               control={form.control}
               name="dateStart"
-              render={({ field }) => {
+              render={({ /* field */ }) => {
                 const startDate = form.watch("dateStart")
                 const endDate = form.watch("dateEnd")
                 const selectedRange: DateRange | undefined =
