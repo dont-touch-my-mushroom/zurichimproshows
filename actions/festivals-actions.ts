@@ -6,16 +6,40 @@ import { ActionState } from "@/types";
 import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 
-export async function createFestivalAction(festival: InsertFestival): Promise<ActionState> {
+// Helper to clean data for DB insertion/update (remove undefined/nulls where appropriate)
+// Useful because Partial<InsertFestival> might still receive nulls from the form
+function cleanDataForDb(data: Record<string, any>): Record<string, any> {
+  const cleaned: Record<string, any> = {};
+  for (const key in data) {
+    // Keep boolean false values, remove null/undefined
+    if (data[key] !== null && data[key] !== undefined) {
+      cleaned[key] = data[key];
+    }
+  }
+  return cleaned;
+}
+
+// createFestivalAction now expects data conforming to InsertFestival
+// Note: The caller (form) is responsible for ensuring userId and required fields are present
+export async function createFestivalAction(festivalData: InsertFestival): Promise<ActionState> {
   try {
-    const newFestival = await createFestival(festival);
+    // Data comes pre-formatted, just clean it
+    const dataToInsert = cleanDataForDb(festivalData) as InsertFestival;
+
+    // Add a check for required fields that might be missed if type assertion is too broad
+    if (!dataToInsert.name || !dataToInsert.country || !dataToInsert.city || !dataToInsert.description || !dataToInsert.userId) {
+       return { status: "error", message: "Missing required festival information for creation." };
+    }
+    
+    const newFestival = await createFestival(dataToInsert);
     revalidatePath("/festivals");
     revalidatePath("/");
     revalidatePath("/list");
     return { status: "success", message: "Festival created successfully", data: newFestival };
   } catch (error) {
     console.error("Error creating festival:", error);
-    return { status: "error", message: "Failed to create festival" };
+    const message = error instanceof Error ? error.message : "Failed to create festival";
+    return { status: "error", message: message };
   }
 }
 
@@ -39,16 +63,34 @@ export async function getFestivalByIdAction(id: string): Promise<ActionState> {
   }
 }
 
-export async function updateFestivalAction(id: string, data: Partial<InsertFestival>): Promise<ActionState> {
+// updateFestivalAction expects Partial<InsertFestival>
+export async function updateFestivalAction(id: string, festivalData: Partial<InsertFestival>): Promise<ActionState> {
   try {
-    const updatedFestival = await updateFestival(id, data);
+    // Clean the partial data
+    let dataToUpdate: Partial<InsertFestival> = cleanDataForDb(festivalData);
+
+    // Add/overwrite updatedAt
+    dataToUpdate.updatedAt = new Date();
+
+    // Remove id from dataToUpdate if it exists, as it's passed separately
+    // The id field should not be part of the set clause in an update
+    delete dataToUpdate.id;
+
+    const updatedFestival = await updateFestival(id, dataToUpdate);
+
+    if (!updatedFestival) {
+      return { status: "error", message: "Festival not found or update failed" };
+    }
+
     revalidatePath("/festivals");
     revalidatePath("/");
     revalidatePath("/list");
+    revalidatePath(`/festivals/${id}`);
     return { status: "success", message: "Festival updated successfully", data: updatedFestival };
   } catch (error) {
     console.error("Error updating festival:", error);
-    return { status: "error", message: "Failed to update festival" };
+    const message = error instanceof Error ? error.message : "Failed to update festival";
+    return { status: "error", message: message };
   }
 }
 

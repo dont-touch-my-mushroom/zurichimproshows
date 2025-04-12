@@ -1,4 +1,5 @@
 import { eq, gt, lte, desc } from "drizzle-orm";
+import { format } from "date-fns";
 import { db } from "../db";
 import { festivalsTable, type InsertFestival, type SelectFestival } from "../schema/festivals-schema";
 
@@ -44,22 +45,24 @@ export async function deleteFestival(id: string): Promise<SelectFestival | null>
 
 export async function getAllFestivals(): Promise<SelectFestival[]> {
   return db.select().from(festivalsTable)
-    .orderBy(desc(festivalsTable.dateFrom));
+    .orderBy(desc(festivalsTable.dateStart));
 }
 
 export async function getUpcomingFestivals(startDate: Date): Promise<SelectFestival[]> {
+  const formattedStartDate = format(startDate, 'yyyy-MM-dd');
   return db
     .select()
     .from(festivalsTable)
-    .where(gt(festivalsTable.dateFrom, startDate))
-    .orderBy(festivalsTable.dateFrom);
+    .where(gt(festivalsTable.dateStart, formattedStartDate))
+    .orderBy(festivalsTable.dateStart);
 }
 
 export async function getPastFestivals(startDate: Date, limit: number): Promise<SelectFestival[]> {
+  const formattedStartDate = format(startDate, 'yyyy-MM-dd');
   return db
     .select()
     .from(festivalsTable)
-    .where(lte(festivalsTable.dateFrom, startDate))
-    .orderBy(desc(festivalsTable.dateFrom))
+    .where(lte(festivalsTable.dateStart, formattedStartDate))
+    .orderBy(desc(festivalsTable.dateStart))
     .limit(limit);
 } 

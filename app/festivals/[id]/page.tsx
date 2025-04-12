@@ -85,7 +85,7 @@ export default async function FestivalPage({ params }: FestivalPageProps) {
           <div className="space-y-2 text-muted-foreground">
             <div className="flex items-center gap-2">
               <CalendarIcon className="h-4 w-4" />
-              <span>{formatDateRange(festival.dateFrom, festival.dateUntil)}</span>
+              <span>{formatDateRange(festival.dateStart, festival.dateEnd)}</span>
             </div>
             <div className="flex items-center gap-4">
               {festival.website && (

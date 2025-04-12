@@ -1,16 +1,15 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, ControllerRenderProps, FieldError } from "react-hook-form"
 import { z } from "zod"
 import { CalendarIcon, Loader2, Save, Trash2 } from "lucide-react"
-import { format } from "date-fns"
+import { format, setDate, isValid, parse } from "date-fns"
 import Image from "next/image"
-
+import { DateRange } from "react-day-picker"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -75,8 +74,8 @@ const formSchema = z
     name: z.string().min(2, { message: "Festival name must be at least 2 characters." }),
     country: z.string().min(2, { message: "Country must be at least 2 characters." }),
     city: z.string().min(2, { message: "City must be at least 2 characters." }),
-    dateFrom: z.date({ required_error: "Start date is required." }),
-    dateUntil: z.date({ required_error: "End date is required." }),
+    dateStart: z.date().optional(),
+    dateEnd: z.date().optional(),
     website: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")),
     instagram: z.string()
       .regex(/^[a-zA-Z0-9._]{1,30}$/, { message: "Invalid Instagram handle format" })
@@ -89,9 +88,17 @@ const formSchema = z
     accommodationOffered: z.boolean().default(false),
     mixerShows: z.boolean().default(false),
   })
-  .refine((data) => data.dateUntil >= data.dateFrom, {
+  .refine((data) => data.dateStart, {
+    message: "Start date is required.",
+    path: ["dateStart"],
+  })
+  .refine((data) => data.dateEnd, {
+    message: "End date is required.",
+    path: ["dateEnd"],
+  })
+  .refine((data) => !data.dateStart || !data.dateEnd || data.dateEnd >= data.dateStart, {
     message: "End date must be after or equal to start date",
-    path: ["dateUntil"],
+    path: ["dateEnd"],
   })
 
 interface FestivalFormProps {
@@ -112,6 +119,8 @@ export function FestivalForm({ festival }: FestivalFormProps) {
       name: festival?.name || "",
       country: festival?.country || "",
       city: festival?.city || "",
+      dateStart: festival?.dateStart ? parse(festival.dateStart, 'yyyy-MM-dd', new Date()) : undefined,
+      dateEnd: festival?.dateEnd ? parse(festival.dateEnd, 'yyyy-MM-dd', new Date()) : undefined,
       website: festival?.website || "",
       instagram: festival?.instagram || "",
       description: festival?.description || "",
@@ -119,8 +128,6 @@ export function FestivalForm({ festival }: FestivalFormProps) {
       languages: festival?.languages || [],
       accommodationOffered: festival?.accommodationOffered || false,
       mixerShows: festival?.mixerShows || false,
-      dateFrom: festival?.dateFrom ? new Date(festival.dateFrom) : undefined,
-      dateUntil: festival?.dateUntil ? new Date(festival.dateUntil) : undefined,
     },
   })
 
@@ -131,7 +138,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
     setFormError(null)
 
     try {
-      const { poster, ...festivalData } = values
+      const { poster, dateStart, dateEnd, ...festivalData } = values
       let posterUrl: string | undefined = festival?.poster || undefined
 
       if (poster && poster instanceof File) {
@@ -154,12 +161,16 @@ export function FestivalForm({ festival }: FestivalFormProps) {
         }
       }
 
+      const formattedFestivalData = {
+        ...festivalData,
+        poster: posterUrl,
+        dateStart: dateStart ? format(dateStart, 'yyyy-MM-dd') : undefined,
+        dateEnd: dateEnd ? format(dateEnd, 'yyyy-MM-dd') : undefined,
+      };
+
       if (festival) {
         // Update existing festival
-        const result = await updateFestivalAction(festival.id, {
-          ...festivalData,
-          poster: posterUrl,
-        })
+        const result = await updateFestivalAction(festival.id, formattedFestivalData)
 
         if (result.status === "success") {
           toast.success("Festival updated successfully!")
@@ -170,8 +181,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
       } else {
         // Create new festival
         const result = await createFestivalAction({
-          ...festivalData,
-          poster: posterUrl,
+          ...formattedFestivalData,
           userId: userId || "",
         })
 
@@ -301,61 +311,77 @@ export function FestivalForm({ festival }: FestivalFormProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="dateFrom"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date From*</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
-                          >
-                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="dateStart"
+              render={({ field }) => {
+                const startDate = form.watch("dateStart")
+                const endDate = form.watch("dateEnd")
+                const selectedRange: DateRange | undefined =
+                  startDate && endDate
+                    ? { from: startDate, to: endDate }
+                    : startDate
+                      ? { from: startDate, to: undefined }
+                      : undefined
 
-              <FormField
-                control={form.control}
-                name="dateUntil"
-                render={({ field }) => (
+                const startError = form.getFieldState("dateStart").error
+                const endError = form.getFieldState("dateEnd").error
+                const errorMessage = endError?.message || startError?.message
+
+                return (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Date Until*</FormLabel>
+                    <FormLabel>Festival Dates*</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant={"outline"}
-                            className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !startDate && "text-muted-foreground",
+                              errorMessage && "border-destructive"
+                            )}
                           >
-                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {startDate ? (
+                              endDate ? (
+                                startDate instanceof Date && isValid(startDate) && endDate instanceof Date && isValid(endDate) ? (
+                                  `${format(startDate, "PPP")} - ${format(endDate, "PPP")}`
+                                ) : (
+                                  <span>Pick dates</span>
+                                )
+                              ) : (
+                                startDate instanceof Date && isValid(startDate) ? (
+                                  format(startDate, "PPP")
+                                ) : (
+                                  <span>Pick dates</span>
+                                )
+                              )
+                            ) : (
+                              <span>Pick dates</span>
+                            )}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={startDate}
+                          selected={selectedRange}
+                          numberOfMonths={1}
+                          onSelect={(range) => {
+                            form.setValue("dateStart", range?.from, { shouldValidate: true })
+                            form.setValue("dateEnd", range?.to, { shouldValidate: true })
+                          }}
+                        />
                       </PopoverContent>
                     </Popover>
-                    <FormMessage />
+                    <FormMessage>{errorMessage}</FormMessage>
                   </FormItem>
-                )}
-              />
-            </div>
+                )
+              }}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
@@ -408,7 +434,7 @@ export function FestivalForm({ festival }: FestivalFormProps) {
                 {posterPreview && (
                   <Card className="w-full max-w-[300px] h-[200px] relative overflow-hidden">
                     <Image
-                      src={posterPreview}
+                      src={posterPreview || ""}
                       alt="Poster preview"
                       className="object-contain"
                       fill

@@ -36,7 +36,7 @@ export function FestivalCard({ festival }: FestivalCardProps) {
         </div>
         <div className="mt-1 flex items-center text-sm text-muted-foreground">
           <CalendarIcon className="mr-1 h-4 w-4" />
-          <span>{formatDateRange(festival.dateFrom, festival.dateUntil)}</span>
+          <span>{formatDateRange(festival.dateStart, festival.dateEnd)}</span>
         </div>
         {festival.slogan && <p className="mt-2 text-sm text-muted-foreground">{festival.slogan}</p>}
       </CardContent>

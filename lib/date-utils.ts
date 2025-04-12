@@ -1,8 +1,29 @@
-import { format } from "date-fns"
+import { format, parseISO, isValid } from 'date-fns'
 
-export function formatDateRange(dateFrom: Date | string, dateUntil: Date | string) {
-  const from = new Date(dateFrom)
-  const until = new Date(dateUntil)
+export function formatDateRange(dateFromInput: Date | string | null, dateUntilInput: Date | string | null): string {
+  if (!dateFromInput || !dateUntilInput) {
+    return ""
+  }
+
+  let from: Date
+  if (typeof dateFromInput === 'string') {
+    from = parseISO(dateFromInput)
+  } else {
+    from = dateFromInput
+  }
+
+  let until: Date
+  if (typeof dateUntilInput === 'string') {
+    until = parseISO(dateUntilInput)
+  } else {
+    until = dateUntilInput
+  }
+
+  if (!isValid(from) || !isValid(until)) {
+    console.error("Invalid date passed to formatDateRange:", { dateFromInput, dateUntilInput })
+    return "Invalid date range"
+  }
+
   const isSameMonth = from.getMonth() === until.getMonth() && from.getFullYear() === until.getFullYear()
   
   return isSameMonth

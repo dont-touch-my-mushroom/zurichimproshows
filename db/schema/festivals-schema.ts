@@ -11,9 +11,9 @@ export const festivalsTable = pgTable("festivals", {
   name: text("name").notNull(),
   country: text("country").notNull(),
   city: text("city").notNull(),
-  dateFrom: timestamp("date_from").notNull(), // Deprecated
+  dateFrom: timestamp("date_from"), // Deprecated
   dateStart: date("date_start"),
-  dateUntil: timestamp("date_until").notNull(), // Deprecated
+  dateUntil: timestamp("date_until"), // Deprecated
   dateEnd: date("date_end"),
   website: text("website"),
   instagram: text("instagram"),
