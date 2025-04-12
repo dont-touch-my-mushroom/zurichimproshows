@@ -1,4 +1,4 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid, date } from "drizzle-orm/pg-core";
 
 export const festivalsTable = pgTable("festivals", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -11,8 +11,10 @@ export const festivalsTable = pgTable("festivals", {
   name: text("name").notNull(),
   country: text("country").notNull(),
   city: text("city").notNull(),
-  dateFrom: timestamp("date_from").notNull(),
-  dateUntil: timestamp("date_until").notNull(),
+  dateFrom: timestamp("date_from").notNull(), // Deprecated
+  dateStart: date("date_start"),
+  dateUntil: timestamp("date_until").notNull(), // Deprecated
+  dateEnd: date("date_end"),
   website: text("website"),
   instagram: text("instagram"),
   poster: text("poster"),
