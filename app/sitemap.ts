@@ -3,7 +3,7 @@ import { getAllFestivalsAction } from '@/actions/festivals-actions' // Import th
 import { SelectFestival } from '@/db/schema/festivals-schema' // Try SelectFestival type
 
 // Replace with your actual base URL
-const URL = 'https://improfestivals.com'
+const URL = 'https://www.improfestivals.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // --- Static Routes ---
