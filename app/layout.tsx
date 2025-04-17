@@ -7,6 +7,7 @@ import {
   ClerkProvider,
 } from '@clerk/nextjs'
 import { Toaster } from "sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 
 const geistSans = Geist({
@@ -47,6 +48,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <Toaster />
+          <SpeedInsights/>
         </body>
       </html>
     </ClerkProvider>
