@@ -12,6 +12,7 @@ const Footer = () => {
             sizes="(max-width: 768px) 100vw, 256px"
             style={{ objectFit: "contain" }}
             priority
+            unoptimized
           />
         </div>
         <p className="text-sm font-light">
