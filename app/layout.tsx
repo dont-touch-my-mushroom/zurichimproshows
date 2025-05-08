@@ -8,6 +8,7 @@ import {
 } from '@clerk/nextjs'
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react"
 
 
 const geistSans = Geist({
@@ -69,6 +70,7 @@ export default function RootLayout({
           <Footer />
           <Toaster />
           <SpeedInsights/>
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
