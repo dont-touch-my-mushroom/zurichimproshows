@@ -77,9 +77,6 @@ export default async function Home() {
           <CarouselNext className="static translate-y-0" />
         </div>
       </Carousel>
-      <div className="text-center py-4">
-        <p className="text-sm text-gray-500">Debug: Using date {today.toISOString()} for filtering</p>
-      </div>
       <h1 className="text-4xl font-bold text-center py-8">Upcoming Festivals</h1>
       <div className="container mx-auto pb-12">
         {upcomingFestivals.length > 0 ? (
