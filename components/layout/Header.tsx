@@ -26,7 +26,7 @@ const Header = () => {
             <Link href="/" className="flex items-center">
               <Image
                 src="https://storage.googleapis.com/improfestivals_images/logo_name_white.png"
-                alt="Improfestivals"
+                alt="Zurich Shows"
                 width={140}
                 height={50}
                 priority
@@ -42,7 +42,7 @@ const Header = () => {
               href="/list"
               className="text-primary-foreground hover:text-primary-foreground/80 px-4 py-2.5 text-base font-medium transition-colors"
             >
-              Festivals
+              Shows
             </Link>
             <Link
               href="/contact"
@@ -51,10 +51,10 @@ const Header = () => {
               Contact
             </Link>
             <Link
-              href="/festival-form"
+              href="/show-form"
               className="text-primary-foreground hover:text-primary-foreground/80 px-4 py-2.5 text-base font-medium transition-colors"
             >
-              Add Festival
+              Add Show
             </Link>
             <SignedOut>
               <SignInButton mode="modal">
@@ -82,7 +82,7 @@ const Header = () => {
                     href="/list"
                     className="text-primary hover:text-primary/80 text-base font-medium transition-colors"
                   >
-                    Festivals
+                    Shows
                   </Link>
                   <Link
                     href="/contact"
@@ -91,10 +91,10 @@ const Header = () => {
                     Contact
                   </Link>
                   <Link
-                    href="/festival-form"
+                    href="/show-form"
                     className="text-primary hover:text-primary/80 text-base font-medium transition-colors"
                   >
-                    Add Festival
+                    Add Show
                   </Link>
                   <SignedOut>
                     <SignInButton mode="modal">

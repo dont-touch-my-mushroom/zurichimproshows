@@ -17,10 +17,10 @@ export default async function ContactPage() {
               </p>
               <div className="mt-4">
                 <a 
-                  href="mailto:info@improfestivals.com"
+                  href="mailto:info@zurichshows.com"
                   className="text-xl font-medium text-blue-600 hover:text-blue-800 transition-colors"
                 >
-                  info@improfestivals.com
+                  info@zurichshows.com
                 </a>
               </div>
             </>

@@ -1,1 +1,1 @@
-export * from "./festivals-schema";
+export * from "./shows-schema";

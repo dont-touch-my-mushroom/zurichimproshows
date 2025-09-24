@@ -8,37 +8,37 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FestivalCard } from "@/components/card/festival-card";
-import { getUpcomingFestivalsAction, getPastFestivalsAction } from "@/actions/festivals-actions";
-import { SelectFestival } from "@/db/schema/festivals-schema";
+import { ShowCard } from "@/components/card/show-card";
+import { getUpcomingShowsAction, getPastShowsAction } from "@/actions/shows-actions";
+import { SelectShow } from "@/db/schema/shows-schema";
 
 const slides = [
   {
     image: "/bg-3.jpg",
-    title: "Impro Festivals all around the world",
+    title: "Impro Shows in Zurich",
     subtitle: "Check the upcoming dates",
-    ctaText: "Festivals",
+    ctaText: "Shows",
     ctaLink: "/list"
   },
   {
     image: "/bg-3.jpg",
     title: "You say Improv, I say Impro",
     subtitle: "But we understand each other",
-    ctaText: "Advertise your festival",
-    ctaLink: "/festival-form"
+    ctaText: "Advertise your show",
+    ctaLink: "/show-form"
   },
 ];
 
 export default async function Home() {
-  // Fetch upcoming festivals
+  // Fetch upcoming shows
   const today = new Date();
   console.log("Debug - Today's date:", today.toISOString());
-  const upcomingResponse = await getUpcomingFestivalsAction(today);
-  const upcomingFestivals = (upcomingResponse.status === "success" ? upcomingResponse.data : []) as SelectFestival[];
+  const upcomingResponse = await getUpcomingShowsAction(today);
+  const upcomingShows = (upcomingResponse.status === "success" ? upcomingResponse.data : []) as SelectShow[];
   
-  // Fetch past festivals
-  const pastResponse = await getPastFestivalsAction(today, 10);
-  const pastFestivals = (pastResponse.status === "success" ? pastResponse.data : []) as SelectFestival[];
+  // Fetch past shows
+  const pastResponse = await getPastShowsAction(today, 10);
+  const pastShows = (pastResponse.status === "success" ? pastResponse.data : []) as SelectShow[];
 
   return (
     <div className="flex flex-col">
@@ -77,28 +77,28 @@ export default async function Home() {
           <CarouselNext className="static translate-y-0" />
         </div>
       </Carousel>
-      <h1 className="text-4xl font-bold text-center py-8">Upcoming Festivals</h1>
+      <h1 className="text-4xl font-bold text-center py-8">Upcoming Shows</h1>
       <div className="container mx-auto pb-12">
-        {upcomingFestivals.length > 0 ? (
+        {upcomingShows.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingFestivals.map((festival) => (
-              <FestivalCard key={festival.id} festival={festival} />
+            {upcomingShows.map((show) => (
+              <ShowCard key={show.id} show={show} />
             ))}
           </div>
         ) : (
-          <p className="text-center text-lg text-muted-foreground">No upcoming festivals scheduled at this time.</p>
+          <p className="text-center text-lg text-muted-foreground">No upcoming shows scheduled at this time.</p>
         )}
         
         <div className="flex justify-center mt-8">
           <Link href="/list">
-            <Button size="lg">View All Festivals</Button>
+            <Button size="lg">View All Shows</Button>
           </Link>
         </div>
       </div>
 
-      <h1 className="text-4xl font-bold text-center py-8">Past Festivals</h1>
+      <h1 className="text-4xl font-bold text-center py-8">Past Shows</h1>
       <div className="container mx-auto pb-12">
-        {pastFestivals.length > 0 ? (
+        {pastShows.length > 0 ? (
           <div className="relative">
             <Carousel className="w-full" 
               opts={{ 
@@ -106,10 +106,10 @@ export default async function Home() {
                 watchDrag: false
               }}>
               <CarouselContent>
-                {pastFestivals.map((festival) => (
-                  <CarouselItem key={festival.id} className="md:basis-1/2 lg:basis-1/3">
+                {pastShows.map((show) => (
+                  <CarouselItem key={show.id} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-1 pointer-events-auto">
-                      <FestivalCard festival={festival} />
+                      <ShowCard show={show} />
                     </div>
                   </CarouselItem>
                 ))}
@@ -127,12 +127,12 @@ export default async function Home() {
             </Carousel>
           </div>
         ) : (
-          <p className="text-center text-lg text-muted-foreground">No past festivals found.</p>
+          <p className="text-center text-lg text-muted-foreground">No past shows found.</p>
         )}
 
         <div className="flex justify-center mt-8">
           <Link href="/list">
-            <Button size="lg" variant="outline">View All Festivals</Button>
+            <Button size="lg" variant="outline">View All Shows</Button>
           </Link>
         </div>
       </div>

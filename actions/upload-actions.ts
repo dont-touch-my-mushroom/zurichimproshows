@@ -12,7 +12,7 @@ const storage = new Storage({
   },
 })
 
-const bucketName = process.env.GOOGLE_CLOUD_BUCKET_NAME || 'improfestivals-images'
+const bucketName = process.env.GOOGLE_CLOUD_BUCKET_NAME || 'zurichshows-images'
 const bucket = storage.bucket(bucketName)
 
 /**
@@ -67,7 +67,7 @@ export async function uploadImageAction(formData: FormData): Promise<{ status: s
     // Generate a unique filename
     const timestamp = Date.now()
     const originalFilename = file.name
-    const directory = formData.get('directory') as string || 'festival-posters'
+    const directory = formData.get('directory') as string || 'show-posters'
     const fileName = `${directory}/${timestamp}-${originalFilename.replace(/\s+/g, '-')}`
     
     // Create a new blob in the bucket

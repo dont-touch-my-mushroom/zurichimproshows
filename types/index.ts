@@ -1,4 +1,4 @@
-export * from "./festival-type";
+export * from "./show-type";
 
 export type ActionState = {
   status: "success" | "error";

@@ -1,9 +1,9 @@
 import { MetadataRoute } from 'next'
-import { getAllFestivalsAction } from '@/actions/festivals-actions' // Import the action
-import { SelectFestival } from '@/db/schema/festivals-schema' // Try SelectFestival type
+import { getAllShowsAction } from '@/actions/shows-actions' // Import the action
+import { SelectShow } from '@/db/schema/shows-schema' // Try SelectShow type
 
 // Replace with your actual base URL
-const URL = 'https://www.improfestivals.com'
+const URL = 'https://www.zurichshows.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // --- Static Routes ---
@@ -18,28 +18,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '/' ? 1 : 0.8, // Prioritize homepage
   }));
 
-  // --- Dynamic Routes (Festivals) ---
-  let festivalRoutes: MetadataRoute.Sitemap = [];
+  // --- Dynamic Routes (Shows) ---
+  let showRoutes: MetadataRoute.Sitemap = [];
   try {
-    const result = await getAllFestivalsAction();
+    const result = await getAllShowsAction();
     if (result.status === 'success' && Array.isArray(result.data)) {
-      const festivals = result.data as SelectFestival[]; // Use SelectFestival
-      festivalRoutes = festivals.map((festival) => ({
-        url: `${URL}/festivals/${festival.id}`, // Use festival ID for the URL
-        lastModified: festival.updatedAt ? new Date(festival.updatedAt).toISOString() : new Date().toISOString(),
-        changeFrequency: 'monthly', // Or based on how often festival details change
+      const shows = result.data as SelectShow[]; // Use SelectShow
+      showRoutes = shows.map((show) => ({
+        url: `${URL}/shows/${show.id}`, // Use show ID for the URL
+        lastModified: show.updatedAt ? new Date(show.updatedAt).toISOString() : new Date().toISOString(),
+        changeFrequency: 'monthly', // Or based on how often show details change
         priority: 0.9,
       }));
     } else {
-      console.error("Failed to fetch festivals for sitemap:", result.message);
+      console.error("Failed to fetch shows for sitemap:", result.message);
     }
   } catch (error) {
-    console.error("Error fetching festivals for sitemap:", error);
+    console.error("Error fetching shows for sitemap:", error);
   }
 
   return [
     ...staticRoutes,
-    ...festivalRoutes,
+    ...showRoutes,
     // ... add other dynamic route arrays here if needed
   ];
 } 
