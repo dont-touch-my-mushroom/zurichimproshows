@@ -66,7 +66,7 @@ const formSchema = z
   .object({
     name: z.string().min(2, { message: "Show name must be at least 2 characters." }),
     showStarts: z.date({ required_error: "Show start time is required." }),
-    doorsOpen: z.date({ required_error: "Doors open time is required." }),
+    doorsOpen: z.date().optional(),
     website: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")),
     instagram: z.string()
       .regex(/^[a-zA-Z0-9._]{1,30}$/, { message: "Invalid Instagram handle format" })
@@ -334,7 +334,7 @@ export function ShowForm({ show }: ShowFormProps) {
                 name="doorsOpen"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Doors Open*</FormLabel>
+                    <FormLabel>Doors Open</FormLabel>
                     <FormControl>
                       <DateTimePicker
                         value={field.value}

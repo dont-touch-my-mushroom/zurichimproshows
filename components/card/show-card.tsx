@@ -52,10 +52,12 @@ export function ShowCard({ show }: ShowCardProps) {
         </div>
 
         {/* Doors Open */}
-        <div className="mt-1 flex items-center text-sm text-muted-foreground">
-          <ClockIcon className="mr-1 h-4 w-4" />
-          <span>Doors: {formatShowTime(show.doorsOpen)}</span>
-        </div>
+        {show.doorsOpen && (
+          <div className="mt-1 flex items-center text-sm text-muted-foreground">
+            <ClockIcon className="mr-1 h-4 w-4" />
+            <span>Doors: {formatShowTime(show.doorsOpen)}</span>
+          </div>
+        )}
 
         {/* Groups */}
         {show.groups && show.groups.length > 0 && (

@@ -82,10 +82,12 @@ export default async function ShowPage({ params }: ShowPageProps) {
               <CalendarIcon className="h-5 w-5" />
               <span className="font-semibold">Show starts: {formatShowTime(show.showStarts)}</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <ClockIcon className="h-4 w-4" />
-              <span>Doors open: {formatShowTime(show.doorsOpen)}</span>
-            </div>
+            {show.doorsOpen && (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <ClockIcon className="h-4 w-4" />
+                <span>Doors open: {formatShowTime(show.doorsOpen)}</span>
+              </div>
+            )}
           </div>
 
           {/* Ticket Information */}
