@@ -6,16 +6,13 @@ import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { CalendarIcon, ClockIcon, Loader2, Save, Trash2, MapPinIcon, TicketIcon, UsersIcon } from "lucide-react"
-import { format } from "date-fns"
+import { Loader2, Save, Trash2, MapPinIcon, TicketIcon, UsersIcon } from "lucide-react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { cn } from "@/lib/utils"
+import { DateTimePicker } from "@/components/ui/datetime-picker"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -338,34 +335,22 @@ export function ShowForm({ show }: ShowFormProps) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Doors Open*</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            <ClockIcon className="mr-2 h-4 w-4" />
-                            {field.value ? (
-                              format(field.value, "PPP 'at' p")
-                            ) : (
-                              <span>Pick doors open time</span>
-                            )}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <DateTimePicker
+                        value={field.value}
+                        onChange={(value) => {
+                          field.onChange(value)
+                          // Auto-fill show starts if it's empty and doors open is filled
+                          const currentShowStarts = form.getValues("showStarts")
+                          if (value && !currentShowStarts) {
+                            // Add 30 minutes to doors open time for show starts
+                            const showStartsTime = new Date(value.getTime() + 30 * 60 * 1000)
+                            form.setValue("showStarts", showStartsTime)
+                          }
+                        }}
+                        placeholder="Pick doors open time"
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -377,34 +362,13 @@ export function ShowForm({ show }: ShowFormProps) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Show Starts*</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? (
-                              format(field.value, "PPP 'at' p")
-                            ) : (
-                              <span>Pick show start time</span>
-                            )}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <DateTimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Pick show start time"
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -435,7 +399,7 @@ export function ShowForm({ show }: ShowFormProps) {
                 name="locationLink"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Venue Link</FormLabel>
+                    <FormLabel>Venue Link (e.g. goolgle maps)</FormLabel>
                     <FormControl>
                       <Input placeholder="https://venue-website.com" {...field} />
                     </FormControl>
@@ -471,7 +435,7 @@ export function ShowForm({ show }: ShowFormProps) {
                   <FormItem>
                     <FormLabel>Ticket Price</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., CHF 25, Free, Donation" {...field} />
+                      <Input placeholder="e.g., 20.- / 15.- students" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
