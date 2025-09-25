@@ -1,11 +1,11 @@
 {
-  "id": "38bdc456-e6d0-484b-825a-154869578cb6",
+  "id": "1ee23aa8-0c8b-46e8-9c42-8ac05abe0cc9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.festivals": {
-      "name": "festivals",
+    "public.shows": {
+      "name": "shows",
       "schema": "",
       "columns": {
         "id": {
@@ -41,29 +41,17 @@
           "primaryKey": false,
           "notNull": true
         },
-        "country": {
-          "name": "country",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "city": {
-          "name": "city",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "date_from": {
-          "name": "date_from",
+        "show_starts": {
+          "name": "show_starts",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
         },
-        "date_until": {
-          "name": "date_until",
+        "doors_open": {
+          "name": "doors_open",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "website": {
           "name": "website",
@@ -87,7 +75,7 @@
           "name": "description",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "slogan": {
           "name": "slogan",
@@ -95,25 +83,41 @@
           "primaryKey": false,
           "notNull": false
         },
-        "languages": {
-          "name": "languages",
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "groups": {
+          "name": "groups",
           "type": "text[]",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "accommodation_offered": {
-          "name": "accommodation_offered",
-          "type": "boolean",
+        "tickets_link": {
+          "name": "tickets_link",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "default": false
+          "notNull": false
         },
-        "mixer_shows": {
-          "name": "mixer_shows",
-          "type": "boolean",
+        "location_name": {
+          "name": "location_name",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "default": false
+          "notNull": false
+        },
+        "location_link": {
+          "name": "location_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ticket_price": {
+          "name": "ticket_price",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

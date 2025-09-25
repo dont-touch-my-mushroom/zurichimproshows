@@ -79,7 +79,7 @@ const formSchema = z
     description: z.string().min(10, { message: "Description must be at least 10 characters." }),
     slogan: z.string().optional(),
     email: z.string().email({ message: "Please enter a valid email." }).optional().or(z.literal("")),
-    groups: z.array(z.string()).optional(),
+    groups: z.array(z.string()).min(1, { message: "At least one performing group is required." }),
     ticketsLink: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")),
     locationName: z.string().optional(),
     locationLink: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")),
@@ -113,7 +113,7 @@ export function ShowForm({ show }: ShowFormProps) {
       description: show?.description || "",
       slogan: show?.slogan || "",
       email: show?.email || "",
-      groups: show?.groups || [],
+      groups: show?.groups && show.groups.length > 0 ? show.groups : [""],
       ticketsLink: show?.ticketsLink || "",
       locationName: show?.locationName || "",
       locationLink: show?.locationLink || "",
@@ -249,7 +249,9 @@ export function ShowForm({ show }: ShowFormProps) {
 
   const removeGroup = (index: number) => {
     const currentGroups = form.getValues("groups") || []
-    form.setValue("groups", currentGroups.filter((_, i) => i !== index))
+    if (currentGroups.length > 1) {
+      form.setValue("groups", currentGroups.filter((_, i) => i !== index))
+    }
   }
 
   return (
@@ -273,6 +275,56 @@ export function ShowForm({ show }: ShowFormProps) {
                   <FormControl>
                     <Input placeholder="Enter show name" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Performing Groups */}
+            <FormField
+              control={form.control}
+              name="groups"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Performing Groups*</FormLabel>
+                  <div className="space-y-2">
+                    {(field.value || []).map((group, index) => (
+                      <div key={index} className="flex gap-2">
+                        <FormControl>
+                          <div className="relative">
+                            <UsersIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input 
+                              placeholder="Group name" 
+                              className="pl-10"
+                              value={group}
+                              onChange={(e) => {
+                                const newGroups = [...(field.value || [])]
+                                newGroups[index] = e.target.value
+                                field.onChange(newGroups)
+                              }}
+                            />
+                          </div>
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeGroup(index)}
+                          disabled={(field.value || []).length <= 1}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={addGroup}
+                      className="w-full"
+                    >
+                      + Add Group
+                    </Button>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -480,54 +532,6 @@ export function ShowForm({ show }: ShowFormProps) {
               )}
             />
 
-            {/* Performing Groups */}
-            <FormField
-              control={form.control}
-              name="groups"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Performing Groups</FormLabel>
-                  <div className="space-y-2">
-                    {(field.value || []).map((group, index) => (
-                      <div key={index} className="flex gap-2">
-                        <FormControl>
-                          <div className="relative">
-                            <UsersIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                              placeholder="Group name" 
-                              className="pl-10"
-                              value={group}
-                              onChange={(e) => {
-                                const newGroups = [...(field.value || [])]
-                                newGroups[index] = e.target.value
-                                field.onChange(newGroups)
-                              }}
-                            />
-                          </div>
-                        </FormControl>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => removeGroup(index)}
-                        >
-                          ×
-                        </Button>
-                      </div>
-                    ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={addGroup}
-                      className="w-full"
-                    >
-                      + Add Group
-                    </Button>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             {/* Poster */}
             <FormItem>

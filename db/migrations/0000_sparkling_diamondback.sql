@@ -1,0 +1,20 @@
+CREATE TABLE "shows" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"name" text NOT NULL,
+	"show_starts" timestamp NOT NULL,
+	"doors_open" timestamp,
+	"website" text,
+	"instagram" text,
+	"poster" text,
+	"description" text,
+	"slogan" text,
+	"email" text,
+	"groups" text[],
+	"tickets_link" text,
+	"location_name" text,
+	"location_link" text,
+	"ticket_price" text
+);

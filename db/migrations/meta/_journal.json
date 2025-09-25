@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1743008857131,
-      "tag": "0000_huge_frightful_four",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1743162836997,
-      "tag": "0001_greedy_pyro",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1744472000269,
-      "tag": "0002_uneven_iron_monger",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1744475125849,
-      "tag": "0003_past_wonder_man",
+      "when": 1758829251301,
+      "tag": "0000_sparkling_diamondback",
       "breakpoints": true
     }
   ]
